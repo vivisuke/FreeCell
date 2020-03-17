@@ -16,7 +16,7 @@
 #define		N_COL				4
 #define		N_NUM				13
 
-typedef unsigned char uint8;
+typedef unsigned char card_t;
 
 //	盤面？状態クラス
 class Board {
@@ -27,7 +27,7 @@ public:
 public:
 	void	init();		//	初期化・カードを配る
 private:
-	uint8		m_freeCell[N_FREECELL];
-	uint8		m_goal[N_GOAL];
-	std::vector<uint8>	m_cascade[N_CASCADE];
+	card_t		m_freeCell[N_FREECELL];
+	card_t		m_goal[N_GOAL];
+	std::vector<card_t>	m_cascade[N_CASCADE];
 };

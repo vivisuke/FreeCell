@@ -12,7 +12,7 @@ mt19937 g_mt(g_rd());
 mt19937 g_mt(0);
 #endif
 
-string to_card_string(uint8 c)
+string to_card_string(card_t c)
 {
 	if( !c ) return " .";
 	string txt;
@@ -47,8 +47,8 @@ void Board::init()		//	初期化・カードを配る
 	for(auto& x: m_freeCell) x = 0;
 	for(auto& x: m_goal) x = 0;
 	for(auto& x: m_cascade) x.clear();
-	vector<uint8> deck;
-	uint8 col = 0;
+	vector<card_t> deck;
+	card_t col = 0;
 	for (int c = 0; c != N_COL; ++c, col+=0x10) {
 		for (int n = 1; n <= N_NUM; ++n) {
 			deck.push_back(col+n);
