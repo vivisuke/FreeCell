@@ -69,7 +69,9 @@ std::string Board::text() const
 	for(auto x: m_freeCell) txt += to_card_string(x);
 	txt += "\n";
 	//
+	int c = 0;
 	for(const auto& lst: m_cascade) {
+		txt += to_string(c++) + ": ";
 		for(auto x: lst)
 			txt += to_card_string(x);
 		txt += "\n";
