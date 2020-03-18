@@ -67,9 +67,23 @@ Board::Board(const Board& x)
 	for (int i = 0; i < N_GOAL; ++i) {
 		m_goal[i] = x.m_goal[i];
 	}
-	for (int i = 0; i < N_CARD; ++i) {
+	for (int i = 0; i < N_COLUMN; ++i) {
 		m_column[i] = x.m_column[i];
 	}
+}
+bool Board::operator==(const Board& x) const
+{
+	if( m_nFreeCell != x.m_nFreeCell ) return false;
+	for (int i = 0; i < N_FREECELL+1; ++i) {
+		if( m_freeCell[i] != x.m_freeCell[i] ) return false;
+	}
+	for (int i = 0; i < N_GOAL; ++i) {
+		if( m_goal[i] != x.m_goal[i] ) return false;
+	}
+	for (int i = 0; i < N_COLUMN; ++i) {
+		if( m_column[i] != x.m_column[i] ) return false;
+	}
+	return true;
 }
 void Board::init()		//	初期化・カードを配る
 {
@@ -201,9 +215,7 @@ void Board::unMove(const Move& mv)
 		int ix = mv.m_dst - 'F';
 		assert( ix >= 0 && ix < m_nFreeCell );
 		cd = m_freeCell[ix];
-		//while( (m_freeCell[ix] = m_freeCell[ix+1]) != 0 ) {
-		//	++ix;
-		//}
+		m_freeCell[ix] = 0;
 		m_nFreeCell -= 1;
 	} else if( mv.m_dst <= 'D' ) {		//	ゴールへの移動
 		int ix = mv.m_dst - 'A';

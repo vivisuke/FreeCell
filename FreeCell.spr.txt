@@ -16,9 +16,9 @@
 ◎ C 03/18 03/19 0.001 ToDo フリーセル位置：'F', 'G', 'H', 'I' に変更
 ◎ C 03/18 03/19 0.001 ToDo ゴール：（スペード、クラブ、ハート、ダイアモンドの順に）'A', 'B', 'C', 'D' に変更
 ● C 03/19             ToDo unMove()
-◎ C 03/19 03/19 0.001 ToDo Board::Board(const Board&);
-● C 03/19             ToDo Board::operator=(const Board&);
-● C 03/19             ToDo Board::operator==(const Board&);
+◎ C 03/19 03/19 0.001 ToDo Board::Board(const Board&)
+● C 03/19             ToDo Board::operator=(const Board&)
+◎ C 03/19 03/19 0.001 ToDo Board::operator==(const Board&)
 ● C 03/19             ToDo 
 ● C 03/19             ToDo 
 ● C 03/19             ToDo 

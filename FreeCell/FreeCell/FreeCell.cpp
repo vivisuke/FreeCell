@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <unordered_map>
+#include <assert.h>
 #include "Board.h"
 #include "utils.h"
 
@@ -11,15 +12,21 @@ int main()
 {
 	Board bd;
 	cout << bd.text() << "\n";
+	Board b2(bd);
+	assert(b2 == bd);
 	//
 	Moves lst;
 	bd.genMoves(lst);
+	cout << "Moves: ";
+	for(const auto& mv: lst) cout << mv.m_src << mv.m_dst << " ";
+	cout << "\n\n";
 	for(const auto& mv: lst) {
 		cout << "Move " << mv.m_src << mv.m_dst << "\n";
 		bd.doMove(mv);
 		cout << bd.text() << "\n";
 		bd.unMove(mv);
 		cout << bd.text() << "\n";
+		assert( b2 == bd );
 	}
 	//
 #if	0
