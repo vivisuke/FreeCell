@@ -1,4 +1,5 @@
-﻿#include <random>
+﻿#include <iostream>
+#include <random>
 #include <algorithm>
 #include <assert.h>
 #include "Board.h"
@@ -153,7 +154,10 @@ void Board::doMove(const Move& mv)
 		sc = m_cascade[ix].back();
 		m_cascade[ix].pop_back();
 	} else {		//	フリーセルからの移動
-		int ix = mv.m_dst - 'A';
+		int ix = mv.m_src - 'A';
+		//if( !(ix >= 0 && ix < m_nFreeCell) ) {
+		//	cout << "???\n";
+		//}
 		assert( ix >= 0 && ix < m_nFreeCell );
 		sc = m_freeCell[ix];
 		while( (m_freeCell[ix] = m_freeCell[ix+1]) != 0 ) {
