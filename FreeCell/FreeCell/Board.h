@@ -17,6 +17,7 @@
 #define		N_COL				4
 #define		N_NUM				13
 
+typedef const char cchar;
 typedef unsigned char uint8;
 typedef unsigned char card_t;
 
@@ -44,6 +45,7 @@ public:
 	Board();
 public:
 	std::string	text() const;
+	std::string	hkeyText() const;			//	ハッシュキーテキスト
 	void	genMoves(Moves&) const;		//	可能着手生成
 public:
 	void	init();		//	初期化・カードを配る

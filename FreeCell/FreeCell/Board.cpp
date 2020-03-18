@@ -96,6 +96,22 @@ std::string Board::text() const
 	}
 	return txt;
 }
+std::string Board::hkeyText() const			//	ハッシュキーテキスト
+{
+	string txt;
+	int sz = N_FREECELL + N_GOAL;
+	for(const auto& lst: m_cascade) sz += lst.size() + 1;		//	+1 for '\0'
+	txt.resize(sz);
+	memcpy(&txt[0], (cchar*)&m_freeCell[0], N_FREECELL);
+	memcpy(&txt[N_FREECELL], (cchar*)&m_goal[0], N_FREECELL);
+	int ix = N_FREECELL + N_GOAL;
+	for(const auto& lst: m_cascade) {
+		memcpy(&txt[ix], (cchar*)&lst[0], lst.size());
+		txt[ix+=lst.size()] = '\0';
+		++ix;
+	}
+	return txt;
+}
 void Board::genMoves(Moves& lst) const		//	可能着手生成
 {
 	lst.clear();
