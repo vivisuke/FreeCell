@@ -47,9 +47,10 @@ public:
 	void	genMoves(Moves&) const;		//	可能着手生成
 public:
 	void	init();		//	初期化・カードを配る
+	void	doMove(const Move&);
 private:
 	int			m_nFreeCell;		//	フリーセルのカード数
-	card_t		m_freeCell[N_FREECELL];
+	card_t		m_freeCell[N_FREECELL+1];		//	+1 for 番人
 	card_t		m_goal[N_GOAL];
 	std::vector<card_t>	m_cascade[N_CASCADE];
 };

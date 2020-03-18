@@ -2,14 +2,17 @@
 #include <algorithm>
 #include <assert.h>
 #include "Board.h"
+#include "utils.h"
 
 using namespace std;
 
+#if	0
 random_device g_rd;
 #if	1
 mt19937 g_mt(g_rd());
 #else
 mt19937 g_mt(0);
+#endif
 #endif
 
 uint8 cardNum(card_t c) { return c&NUM_MASK; }
@@ -122,5 +125,31 @@ void Board::genMoves(Moves& lst) const		//	可能着手生成
 		auto gi = cardColIX(sc);
 		if( m_goal[gi] == cardNum(sc) - 1 )
 			lst.emplace_back('0'+s, 'G');			//	ゴールへの移動
+	}
+}
+void Board::doMove(const Move& mv)
+{
+	card_t sc = 0;		//	移動カード
+	if( isdigit(mv.m_src) ) {		//	列からの移動
+		int ix = mv.m_src - '0';
+		sc = m_cascade[ix].back();
+		m_cascade[ix].pop_back();
+	} else {		//	フリーセルからの移動
+		int ix = mv.m_dst - 'A';
+		assert( ix >= 0 && ix < m_nFreeCell );
+		sc = m_freeCell[ix];
+		while( (m_freeCell[ix] = m_freeCell[ix+1]) != 0 ) {
+			++ix;
+		}
+		m_nFreeCell -= 1;
+	}
+	if( isdigit(mv.m_dst) ) {		//	列への移動
+		int ix = mv.m_dst - '0';
+		m_cascade[ix].push_back(sc);
+	} else if( mv.m_dst == 'F' ) {		//	フリーセルへの移動
+		m_freeCell[m_nFreeCell++] = sc;
+	} else if( mv.m_dst == 'G' ) {		//	ゴールへの移動
+		int ix = cardColIX(sc);
+		m_goal[ix] += 1;
 	}
 }
