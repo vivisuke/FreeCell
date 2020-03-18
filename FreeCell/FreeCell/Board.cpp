@@ -79,7 +79,7 @@ void Board::init()		//	初期化・カードを配る
 std::string Board::text() const
 {
 	string txt;
-	txt += "G: ";
+	txt += "A: ";
 	for(auto x: m_goal) txt += to_card_string(x);
 	txt += "\n";
 	txt += "F: ";
@@ -118,8 +118,9 @@ void Board::genMoves(Moves& lst) const		//	可能着手生成
 	lst.clear();
 	for (int s = 0; s != N_COLUMN; ++s) {
 		if( !m_column[s].empty() ) {				//	列[i] が空でない場合
-			if( m_nFreeCell != N_FREECELL )
-				lst.emplace_back('0'+s, 'F');			//	フリーセルへの移動
+			if( m_nFreeCell != N_FREECELL ) {
+				lst.emplace_back('0'+s, 'F'+m_nFreeCell);			//	フリーセルへの移動
+			}
 			card_t sc = m_column[s].back();		//	末尾カード
 			//	別の列末尾への移動
 			for (int d = 0; d != N_COLUMN; ++d) {
@@ -129,7 +130,7 @@ void Board::genMoves(Moves& lst) const		//	可能着手生成
 			//	ゴールへの移動
 			auto gi = cardColIX(sc);
 			if( m_goal[gi] == cardNum(sc) - 1 )
-				lst.emplace_back('0'+s, 'G');			//	ゴールへの移動
+				lst.emplace_back('0'+s, 'A'+gi);			//	ゴールへの移動
 		}
 	}
 	//	フリーセルから列・ゴールへの移動
@@ -138,12 +139,12 @@ void Board::genMoves(Moves& lst) const		//	可能着手生成
 		//	別の列末尾への移動
 		for (int d = 0; d != N_COLUMN; ++d) {
 			if( !m_column[d].empty() && canPushBack(m_column[d].back(), sc) )
-				lst.emplace_back('A'+s, '0'+d);			//	i から d への移動
+				lst.emplace_back('F'+s, '0'+d);			//	i から d への移動
 		}
 		//	ゴールへの移動
 		auto gi = cardColIX(sc);
 		if( m_goal[gi] == cardNum(sc) - 1 )
-			lst.emplace_back('0'+s, 'G');			//	ゴールへの移動
+			lst.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
 	}
 }
 void Board::doMove(const Move& mv)
@@ -154,7 +155,7 @@ void Board::doMove(const Move& mv)
 		sc = m_column[ix].back();
 		m_column[ix].pop_back();
 	} else {		//	フリーセルからの移動
-		int ix = mv.m_src - 'A';
+		int ix = mv.m_src - 'F';
 		//if( !(ix >= 0 && ix < m_nFreeCell) ) {
 		//	cout << "???\n";
 		//}
@@ -168,10 +169,11 @@ void Board::doMove(const Move& mv)
 	if( isdigit(mv.m_dst) ) {		//	列への移動
 		int ix = mv.m_dst - '0';
 		m_column[ix].push_back(sc);
-	} else if( mv.m_dst == 'F' ) {		//	フリーセルへの移動
+	} else if( mv.m_dst >= 'F' ) {		//	フリーセルへの移動
 		m_freeCell[m_nFreeCell++] = sc;
-	} else if( mv.m_dst == 'G' ) {		//	ゴールへの移動
+	} else if( mv.m_dst <= 'D' ) {		//	ゴールへの移動
 		int ix = cardColIX(sc);
+		assert( ix == mv.m_dst - 'A' );
 		m_goal[ix] += 1;
 	}
 }

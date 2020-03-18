@@ -12,7 +12,7 @@ int main()
 	Board bd;
 	cout << bd.text() << "\n";
 	//
-	for (int i = 0; i < 100; ++i) {
+	for (int i = 0; i < 1; ++i) {
 		auto hk = bd.hkeyText();
 		if( g_map.find(hk) != g_map.end() )
 			break;
