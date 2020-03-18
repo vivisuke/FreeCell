@@ -30,7 +30,7 @@ bool canPushBack(card_t c1, card_t c2)	//	c1 の次に c2 を追加できるか�
 
 string to_card_string(card_t c)
 {
-	if( !c ) return " . ";
+	if( !(c&NUM_MASK) ) return " . ";
 	string txt;
 	int col = c & COL_MASK;
 	switch(c & COL_MASK) {
@@ -107,7 +107,10 @@ std::string Board::text() const
 {
 	string txt;
 	txt += "A: ";
-	for(auto x: m_goal) txt += to_card_string(x);
+	//for(auto x: m_goal) txt += to_card_string(x);
+	for (int i = 0; i < N_COL; ++i) {
+		txt += to_card_string(m_goal[i] + (i<<4));
+	}
 	txt += "\n";
 	txt += "F: ";
 	for (int i = 0; i != N_FREECELL; ++i)
