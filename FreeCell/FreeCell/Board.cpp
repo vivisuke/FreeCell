@@ -63,7 +63,7 @@ void Board::init()		//	初期化・カードを配る
 	m_nFreeCell = 0;		//	フリーセルのカード数
 	for(auto& x: m_freeCell) x = 0;
 	for(auto& x: m_goal) x = 0;
-	for(auto& x: m_cascade) x.clear();
+	for(auto& x: m_column) x.clear();
 	vector<card_t> deck;
 	card_t col = 0;
 	for (int c = 0; c != N_COL; ++c, col+=0x10) {
@@ -73,7 +73,7 @@ void Board::init()		//	初期化・カードを配る
 	}
 	shuffle(deck.begin(), deck.end(), g_mt);
 	for (int i = 0; i !=deck.size(); ++i) {
-		m_cascade[i%N_CASCADE].push_back(deck[i]);
+		m_column[i%N_COLUMN].push_back(deck[i]);
 	}
 }
 std::string Board::text() const
@@ -89,7 +89,7 @@ std::string Board::text() const
 	txt += "\n";
 	//
 	int c = 0;
-	for(const auto& lst: m_cascade) {
+	for(const auto& lst: m_column) {
 		txt += to_string(c++) + ": ";
 		for(auto x: lst)
 			txt += to_card_string(x);
@@ -101,12 +101,12 @@ std::string Board::hkeyText() const			//	ハッシュキーテキスト
 {
 	string txt;
 	int sz = N_FREECELL + N_GOAL;
-	for(const auto& lst: m_cascade) sz += lst.size() + 1;		//	+1 for '\0'
+	for(const auto& lst: m_column) sz += lst.size() + 1;		//	+1 for '\0'
 	txt.resize(sz);
 	memcpy(&txt[0], (cchar*)&m_freeCell[0], N_FREECELL);
 	memcpy(&txt[N_FREECELL], (cchar*)&m_goal[0], N_FREECELL);
 	int ix = N_FREECELL + N_GOAL;
-	for(const auto& lst: m_cascade) {
+	for(const auto& lst: m_column) {
 		memcpy(&txt[ix], (cchar*)&lst[0], lst.size());
 		txt[ix+=lst.size()] = '\0';
 		++ix;
@@ -116,14 +116,14 @@ std::string Board::hkeyText() const			//	ハッシュキーテキスト
 void Board::genMoves(Moves& lst) const		//	可能着手生成
 {
 	lst.clear();
-	for (int s = 0; s != N_CASCADE; ++s) {
-		if( !m_cascade[s].empty() ) {				//	列[i] が空でない場合
+	for (int s = 0; s != N_COLUMN; ++s) {
+		if( !m_column[s].empty() ) {				//	列[i] が空でない場合
 			if( m_nFreeCell != N_FREECELL )
 				lst.emplace_back('0'+s, 'F');			//	フリーセルへの移動
-			card_t sc = m_cascade[s].back();		//	末尾カード
+			card_t sc = m_column[s].back();		//	末尾カード
 			//	別の列末尾への移動
-			for (int d = 0; d != N_CASCADE; ++d) {
-				if( s != d && !m_cascade[d].empty() && canPushBack(m_cascade[d].back(), sc) )
+			for (int d = 0; d != N_COLUMN; ++d) {
+				if( s != d && !m_column[d].empty() && canPushBack(m_column[d].back(), sc) )
 					lst.emplace_back('0'+s, '0'+d);			//	i から d への移動
 			}
 			//	ゴールへの移動
@@ -136,8 +136,8 @@ void Board::genMoves(Moves& lst) const		//	可能着手生成
 	for (int s = 0; s != m_nFreeCell; ++s) {
 		card_t sc = m_freeCell[s];
 		//	別の列末尾への移動
-		for (int d = 0; d != N_CASCADE; ++d) {
-			if( !m_cascade[d].empty() && canPushBack(m_cascade[d].back(), sc) )
+		for (int d = 0; d != N_COLUMN; ++d) {
+			if( !m_column[d].empty() && canPushBack(m_column[d].back(), sc) )
 				lst.emplace_back('A'+s, '0'+d);			//	i から d への移動
 		}
 		//	ゴールへの移動
@@ -151,8 +151,8 @@ void Board::doMove(const Move& mv)
 	card_t sc = 0;		//	移動カード
 	if( isdigit(mv.m_src) ) {		//	列からの移動
 		int ix = mv.m_src - '0';
-		sc = m_cascade[ix].back();
-		m_cascade[ix].pop_back();
+		sc = m_column[ix].back();
+		m_column[ix].pop_back();
 	} else {		//	フリーセルからの移動
 		int ix = mv.m_src - 'A';
 		//if( !(ix >= 0 && ix < m_nFreeCell) ) {
@@ -167,7 +167,7 @@ void Board::doMove(const Move& mv)
 	}
 	if( isdigit(mv.m_dst) ) {		//	列への移動
 		int ix = mv.m_dst - '0';
-		m_cascade[ix].push_back(sc);
+		m_column[ix].push_back(sc);
 	} else if( mv.m_dst == 'F' ) {		//	フリーセルへの移動
 		m_freeCell[m_nFreeCell++] = sc;
 	} else if( mv.m_dst == 'G' ) {		//	ゴールへの移動
