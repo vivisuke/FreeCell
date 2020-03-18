@@ -11,12 +11,32 @@
 #define		HEART				0x20
 #define		DIAMOND			0x30
 #define		COL_MASK			0xf0
+#define		BR_MASK			0x20
 #define		NUM_MASK		0x0f
 #define		N_CARD			(4*13)
 #define		N_COL				4
 #define		N_NUM				13
 
+typedef unsigned char uint8;
 typedef unsigned char card_t;
+
+//	位置：
+//		ゴール：			'G'
+//		フリーセル：	移動先の場合：'F'、移動元の場合： 'A'～'D'
+//		カスケード：	'0'～'7'
+struct Move {
+public:
+	Move(char src = 0, char dst = 0)
+		: m_src(src)
+		, m_dst(dst)
+	{
+	}
+public:
+	char		m_src;		//	移動元
+	char		m_dst;		//	移動先
+};
+
+typedef std::vector<Move> Moves;
 
 //	盤面？状態クラス
 class Board {
@@ -24,9 +44,11 @@ public:
 	Board();
 public:
 	std::string	text() const;
+	void	genMoves(Moves&) const;		//	可能着手生成
 public:
 	void	init();		//	初期化・カードを配る
 private:
+	int			m_nFreeCell;		//	フリーセルのカード数
 	card_t		m_freeCell[N_FREECELL];
 	card_t		m_goal[N_GOAL];
 	std::vector<card_t>	m_cascade[N_CASCADE];
