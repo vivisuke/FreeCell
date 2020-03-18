@@ -43,13 +43,16 @@ typedef std::vector<Move> Moves;
 class Board {
 public:
 	Board();
+	Board(const Board&);
 public:
+	bool	operator==(const Board&) const;
 	std::string	text() const;
 	std::string	hkeyText() const;			//	ハッシュキーテキスト
 	void	genMoves(Moves&) const;		//	可能着手生成
 public:
 	void	init();		//	初期化・カードを配る
 	void	doMove(const Move&);
+	void	unMove(const Move&);
 private:
 	int			m_nFreeCell;		//	フリーセルのカード数
 	card_t		m_freeCell[N_FREECELL+1];		//	+1 for 番人

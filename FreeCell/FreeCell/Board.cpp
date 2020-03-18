@@ -53,10 +53,23 @@ string to_card_string(card_t c)
 	txt += " ";
 	return txt;
 }
-
+//----------------------------------------------------------------------
 Board::Board()
 {
 	init();
+}
+Board::Board(const Board& x)
+{
+	m_nFreeCell = x.m_nFreeCell;
+	for (int i = 0; i < N_FREECELL+1; ++i) {
+		m_freeCell[i] = x.m_freeCell[i];
+	}
+	for (int i = 0; i < N_GOAL; ++i) {
+		m_goal[i] = x.m_goal[i];
+	}
+	for (int i = 0; i < N_CARD; ++i) {
+		m_column[i] = x.m_column[i];
+	}
 }
 void Board::init()		//	初期化・カードを配る
 {
@@ -149,10 +162,10 @@ void Board::genMoves(Moves& lst) const		//	可能着手生成
 }
 void Board::doMove(const Move& mv)
 {
-	card_t sc = 0;		//	移動カード
+	card_t cd = 0;		//	移動カード
 	if( isdigit(mv.m_src) ) {		//	列からの移動
 		int ix = mv.m_src - '0';
-		sc = m_column[ix].back();
+		cd = m_column[ix].back();
 		m_column[ix].pop_back();
 	} else {		//	フリーセルからの移動
 		int ix = mv.m_src - 'F';
@@ -160,7 +173,7 @@ void Board::doMove(const Move& mv)
 		//	cout << "???\n";
 		//}
 		assert( ix >= 0 && ix < m_nFreeCell );
-		sc = m_freeCell[ix];
+		cd = m_freeCell[ix];
 		while( (m_freeCell[ix] = m_freeCell[ix+1]) != 0 ) {
 			++ix;
 		}
@@ -168,12 +181,44 @@ void Board::doMove(const Move& mv)
 	}
 	if( isdigit(mv.m_dst) ) {		//	列への移動
 		int ix = mv.m_dst - '0';
-		m_column[ix].push_back(sc);
+		m_column[ix].push_back(cd);
 	} else if( mv.m_dst >= 'F' ) {		//	フリーセルへの移動
-		m_freeCell[m_nFreeCell++] = sc;
+		m_freeCell[m_nFreeCell++] = cd;
 	} else if( mv.m_dst <= 'D' ) {		//	ゴールへの移動
-		int ix = cardColIX(sc);
+		int ix = cardColIX(cd);
 		assert( ix == mv.m_dst - 'A' );
 		m_goal[ix] += 1;
+	}
+}
+void Board::unMove(const Move& mv)
+{
+	card_t cd = 0;		//	移動カード
+	if( isdigit(mv.m_dst) ) {		//	列への移動
+		int ix = mv.m_dst - '0';
+		cd = m_column[ix].back();
+		m_column[ix].pop_back();
+	} else if( mv.m_dst >= 'F' ) {		//	フリーセルへの移動
+		int ix = mv.m_dst - 'F';
+		assert( ix >= 0 && ix < m_nFreeCell );
+		cd = m_freeCell[ix];
+		//while( (m_freeCell[ix] = m_freeCell[ix+1]) != 0 ) {
+		//	++ix;
+		//}
+		m_nFreeCell -= 1;
+	} else if( mv.m_dst <= 'D' ) {		//	ゴールへの移動
+		int ix = mv.m_dst - 'A';
+		cd = (ix << 4) + m_goal[ix];
+		m_goal[ix] -= 1;
+	}
+	if( isdigit(mv.m_src) ) {		//	列からの移動
+		int ix = mv.m_src - '0';
+		m_column[ix].push_back(cd);
+	} else if( mv.m_src >= 'F' ) {		//	フリーセルからの移動
+		int ix = mv.m_src - 'F';
+		for (int i = N_FREECELL-1; --i > ix; ) {
+			m_freeCell[i+1] = m_freeCell[i];
+		}
+		m_freeCell[ix] = cd;
+		m_nFreeCell += 1;
 	}
 }

@@ -12,6 +12,17 @@ int main()
 	Board bd;
 	cout << bd.text() << "\n";
 	//
+	Moves lst;
+	bd.genMoves(lst);
+	for(const auto& mv: lst) {
+		cout << "Move " << mv.m_src << mv.m_dst << "\n";
+		bd.doMove(mv);
+		cout << bd.text() << "\n";
+		bd.unMove(mv);
+		cout << bd.text() << "\n";
+	}
+	//
+#if	0
 	for (int i = 0; i < 1; ++i) {
 		auto hk = bd.hkeyText();
 		if( g_map.find(hk) != g_map.end() )
@@ -28,6 +39,7 @@ int main()
 		bd.doMove(mv);
 		cout << bd.text() << "\n";
 	}
+#endif
 	//
     std::cout << "OK\n";
 }
