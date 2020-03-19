@@ -18,7 +18,7 @@ int main()
 	g_map[hktxt] = 0;
 	vector<string> lst, lst2;
 	lst.push_back(hktxt);
-	for (int n = 1; n <= 8; ++n) {		//	手数
+	for (int n = 1; n <= 10; ++n) {		//	手数
 		lst2.clear();	//	末端ノード
 		for(const auto& txt: lst) {
 			bd.set(txt);
@@ -35,8 +35,8 @@ int main()
 			}
 		}
 		lst.swap(lst2);		//	末端ノードリストを lst に転送
+		cout << n << ": lst.size() = " << lst.size() << "\n";
 	}
-	cout << "lst.size() = " << lst.size() << "\n";
 #if	0
 	Board b2(bd);
 	auto hktxt = bd.hkeyText();

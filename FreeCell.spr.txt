@@ -19,7 +19,7 @@
 ● C 03/19             ToDo Board::operator=(const Board&)
 ◎ C 03/19 03/19 0.001 ToDo Board::operator==(const Board&)
 ◎ C 03/19 03/19 0.001 問題 ゴールにあるカードのマーク表示が不正
-● C 03/19             ToDo 10手先までの局面数カウント
+◎ C 03/19 03/19 0.001 ToDo 10手先までの局面数カウント
 ◎ C 03/19 03/19 0.001 ToDo Board::set(hkeyText)
 ◎ C 03/19 03/19 0.001 ToDo Board::operator!=(const Board&)
 ◎ C 03/19 03/19 0.001 問題 Board::hkeyText()：空列があるとクラッシュ
