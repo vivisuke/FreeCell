@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <unordered_map>
+#include <chrono>
 #include <assert.h>
 #include "Board.h"
 #include "utils.h"
@@ -13,6 +14,7 @@ int main()
 	Board bd;
 	cout << bd.text() << "\n";
 	//
+	auto start = std::chrono::system_clock::now();
 	auto hktxt = bd.hkeyText();
 	g_map.clear();
 	g_map[hktxt] = 0;
@@ -37,6 +39,10 @@ int main()
 		lst.swap(lst2);		//	末端ノードリストを lst に転送
 		cout << n << ": lst.size() = " << lst.size() << "\n";
 	}
+	auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+    auto dur = end - start;        // 要した時間を計算
+    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+    cout << "dur: " << msec << "msec\n";
 #if	0
 	Board b2(bd);
 	auto hktxt = bd.hkeyText();
