@@ -13,12 +13,38 @@ int main()
 	Board bd;
 	cout << bd.text() << "\n";
 	//
+	auto hktxt = bd.hkeyText();
+	g_map.clear();
+	g_map[hktxt] = 0;
+	vector<string> lst, lst2;
+	lst.push_back(hktxt);
+	for (int n = 1; n <= 8; ++n) {		//	手数
+		lst2.clear();	//	末端ノード
+		for(const auto& txt: lst) {
+			bd.set(txt);
+			Moves lst;
+			bd.genMoves(lst);
+			for(const auto& mv: lst) {
+				bd.doMove(mv);
+				auto hk = bd.hkeyText();
+				if( g_map.find(hk) == g_map.end() ) {
+					g_map[hk] = n;
+					lst2.push_back(hk);
+				}
+				bd.unMove(mv);
+			}
+		}
+		lst.swap(lst2);		//	末端ノードリストを lst に転送
+	}
+	cout << "lst.size() = " << lst.size() << "\n";
+#if	0
 	Board b2(bd);
 	auto hktxt = bd.hkeyText();
 	bd.init();
 	assert( bd != b2 );
 	bd.set(hktxt);
 	assert( bd == b2 );
+#endif
 #if	0
 	Board b2(bd);
 	assert(b2 == bd);

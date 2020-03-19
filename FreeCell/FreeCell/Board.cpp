@@ -137,9 +137,13 @@ std::string Board::hkeyText() const			//	ハッシュキーテキスト
 	memcpy(&txt[N_FREECELL], (cchar*)&m_goal[0], N_GOAL);	//	ゴール状態
 	int ix = N_FREECELL + N_GOAL;
 	for(const auto& lst: m_column) {
-		memcpy(&txt[ix], (cchar*)&lst[0], lst.size());		//	各列状態
-		txt[ix+=lst.size()] = '\0';		//	ヌルターミネート
-		++ix;
+		if( lst.empty() ) {
+			txt[ix++] = '\0';		//	ヌルターミネート
+		} else {
+			memcpy(&txt[ix], (cchar*)&lst[0], lst.size());		//	各列状態
+			txt[ix+=lst.size()] = '\0';		//	ヌルターミネート
+			++ix;
+		}
 	}
 	return txt;
 }
