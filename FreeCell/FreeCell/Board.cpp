@@ -158,6 +158,13 @@ void Board::set(const std::string& txt)
 		++ix;
 	}
 }
+int Board::nEmptyColumns() const			//	空欄カラム数を返す
+{
+	int n = 0;
+	for(const auto& lst: m_column)
+		if( lst.empty() ) ++n;
+	return n;
+}
 void Board::genMoves(Moves& lst) const		//	可能着手生成
 {
 	lst.clear();

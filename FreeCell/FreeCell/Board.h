@@ -49,6 +49,7 @@ public:
 	bool	operator!=(const Board& x) const { return !operator==(x); }
 	std::string	text() const;
 	std::string	hkeyText() const;			//	ハッシュキーテキスト
+	int	nEmptyColumns() const;			//	空欄カラム数を返す
 	void	genMoves(Moves&) const;		//	可能着手生成
 public:
 	void	init();		//	初期化・カードを配る
