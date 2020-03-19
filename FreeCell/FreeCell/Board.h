@@ -46,11 +46,13 @@ public:
 	Board(const Board&);
 public:
 	bool	operator==(const Board&) const;
+	bool	operator!=(const Board& x) const { return !operator==(x); }
 	std::string	text() const;
 	std::string	hkeyText() const;			//	ハッシュキーテキスト
 	void	genMoves(Moves&) const;		//	可能着手生成
 public:
 	void	init();		//	初期化・カードを配る
+	void	set(const std::string&);
 	void	doMove(const Move&);
 	void	unMove(const Move&);
 private:

@@ -95,12 +95,12 @@ void Board::init()		//	初期化・カードを配る
 	card_t col = 0;
 	for (int c = 0; c != N_COL; ++c, col+=0x10) {
 		for (int n = 1; n <= N_NUM; ++n) {
-			deck.push_back(col+n);
+			deck.push_back(col+n);		//	52枚のカードをいったんデックに入れる
 		}
 	}
-	shuffle(deck.begin(), deck.end(), g_mt);
+	shuffle(deck.begin(), deck.end(), g_mt);		//	デックをシャフル
 	for (int i = 0; i !=deck.size(); ++i) {
-		m_column[i%N_COLUMN].push_back(deck[i]);
+		m_column[i%N_COLUMN].push_back(deck[i]);	//	デックのカードを順に m_column[] に格納
 	}
 }
 std::string Board::text() const
@@ -133,15 +133,26 @@ std::string Board::hkeyText() const			//	ハッシュキーテキスト
 	int sz = N_FREECELL + N_GOAL;
 	for(const auto& lst: m_column) sz += lst.size() + 1;		//	+1 for '\0'
 	txt.resize(sz);
-	memcpy(&txt[0], (cchar*)&m_freeCell[0], N_FREECELL);
-	memcpy(&txt[N_FREECELL], (cchar*)&m_goal[0], N_FREECELL);
+	memcpy(&txt[0], (cchar*)&m_freeCell[0], N_FREECELL);		//	フリーセル状態
+	memcpy(&txt[N_FREECELL], (cchar*)&m_goal[0], N_GOAL);	//	ゴール状態
 	int ix = N_FREECELL + N_GOAL;
 	for(const auto& lst: m_column) {
-		memcpy(&txt[ix], (cchar*)&lst[0], lst.size());
-		txt[ix+=lst.size()] = '\0';
+		memcpy(&txt[ix], (cchar*)&lst[0], lst.size());		//	各列状態
+		txt[ix+=lst.size()] = '\0';		//	ヌルターミネート
 		++ix;
 	}
 	return txt;
+}
+void Board::set(const std::string& txt)
+{
+	memcpy(&m_freeCell[0], (cchar*)&txt[0], N_FREECELL);		//	フリーセル状態
+	memcpy(&m_goal[0], (cchar*)&txt[N_FREECELL], N_GOAL);	//	ゴール状態
+	int ix = N_FREECELL + N_GOAL;
+	for(auto& lst: m_column) {
+		lst.clear();
+		while( txt[ix] != '\0' ) lst.push_back(txt[ix++]);
+		++ix;
+	}
 }
 void Board::genMoves(Moves& lst) const		//	可能着手生成
 {

@@ -12,17 +12,16 @@
 ◎ C 03/18 03/18 0.001 ToDo ハッシュキー生成可能に
 ◎ C 03/18 03/18 0.001 ToDo 乱数シード1で実行するとアサーションが発生した
 ◎ C 03/18 03/19 0.001 ToDo cascade は column に改名
-● C 03/18             ToDo 10手までの全盤面生成
 ◎ C 03/18 03/19 0.001 ToDo フリーセル位置：'F', 'G', 'H', 'I' に変更
 ◎ C 03/18 03/19 0.001 ToDo ゴール：（スペード、クラブ、ハート、ダイアモンドの順に）'A', 'B', 'C', 'D' に変更
-● C 03/19             ToDo unMove()
+◎ C 03/19 03/19 0.001 ToDo unMove()
 ◎ C 03/19 03/19 0.001 ToDo Board::Board(const Board&)
 ● C 03/19             ToDo Board::operator=(const Board&)
 ◎ C 03/19 03/19 0.001 ToDo Board::operator==(const Board&)
 ◎ C 03/19 03/19 0.001 問題 ゴールにあるカードのマーク表示が不正
-● C 03/19             ToDo 
-● C 03/19             ToDo 
-● C 03/19             ToDo 
+● C 03/19             ToDo 10手先までの局面数カウント
+◎ C 03/19 03/19 0.001 ToDo Board::set(hkeyText)
+◎ C 03/19 03/19 0.001 ToDo Board::operator!=(const Board&)
 ● C 03/19             ToDo 
 ● C 03/19             ToDo 
 ● C 03/19             ToDo 

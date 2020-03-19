@@ -12,6 +12,14 @@ int main()
 {
 	Board bd;
 	cout << bd.text() << "\n";
+	//
+	Board b2(bd);
+	auto hktxt = bd.hkeyText();
+	bd.init();
+	assert( bd != b2 );
+	bd.set(hktxt);
+	assert( bd == b2 );
+#if	0
 	Board b2(bd);
 	assert(b2 == bd);
 	//
@@ -28,6 +36,7 @@ int main()
 		cout << bd.text() << "\n";
 		assert( b2 == bd );
 	}
+#endif
 	//
 #if	0
 	for (int i = 0; i < 1; ++i) {
