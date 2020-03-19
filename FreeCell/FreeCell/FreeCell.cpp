@@ -92,6 +92,11 @@ int main()
 	    bd.doMove(mv);
 		cout << bd.text() << "\n";
     }
+	cout << "hkey = " << bd.hkeyHex() << "\n";
+	bd.genMoves(mvs);
+	cout << "Moves: ";
+	for(const auto& mv: mvs) cout << mv.text() << " ";
+	cout << "\n\n";
     //
 #if	0
 	auto start = std::chrono::system_clock::now();

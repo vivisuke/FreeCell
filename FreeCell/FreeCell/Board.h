@@ -52,6 +52,7 @@ public:
 	bool	operator!=(const Board& x) const { return !operator==(x); }
 	std::string	text() const;
 	std::string	hkeyText() const;			//	ハッシュキーテキスト
+	std::string	hkeyHex() const;			//	ハッシュキー１６進数テキスト
 	bool	checkNCard() const;				//	カード数チェック
 	int	nFreeCell() const { return m_nFreeCell; }
 	int	nEmptyColumns() const;			//	空欄カラム数を返す

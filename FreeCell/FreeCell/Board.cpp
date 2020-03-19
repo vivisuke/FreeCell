@@ -136,6 +136,25 @@ std::string Board::text() const
 	}
 	return txt;
 }
+std::string Board::hkeyHex() const			//	ハッシュキー１６進数テキスト
+{
+	string hk = hkeyText();
+	string txt;
+	txt.resize(hk.size()*5+1);
+	int ix = 0;
+#if	1
+	for (int i = 0; i != hk.size(); ++i) {
+		sprintf_s(&txt[ix], txt.size()-ix, "0x%02x,", (int)hk[i]);
+		ix += 5;
+	}
+#else
+	for(auto ch: hk) {
+		sprintf_s(&txt[ix], txt.size()-ix, "0x%02x,", (int)ch);
+		ix += 5;
+	}
+#endif
+	return txt;
+}
 std::string Board::hkeyText() const			//	ハッシュキーテキスト
 {
 	string txt;
