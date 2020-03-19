@@ -106,7 +106,6 @@ void Board::init()		//	初期化・カードを配る
 std::string Board::text() const
 {
 	string txt;
-	txt += "nFreeCell = " + to_string(m_nFreeCell) + "\n";
 	txt += "A: ";
 	//for(auto x: m_home) txt += to_card_string(x);
 	for (int i = 0; i < N_COL; ++i) {
@@ -117,7 +116,8 @@ std::string Board::text() const
 	for (int i = 0; i != N_FREECELL; ++i)
 		txt += to_card_string(m_freeCell[i]);
 	//for(auto x: m_freeCell) txt += to_card_string(x);
-	txt += "\n";
+	txt += " (nFreeCell = " + to_string(m_nFreeCell) + ")\n";
+	//txt += "\n";
 	//
 	int c = 0;
 	for(const auto& lst: m_column) {
@@ -273,7 +273,7 @@ void Board::unMove(const Move& mv)
 		m_column[ix].push_back(cd);
 	} else if( mv.m_src >= 'F' ) {		//	フリーセルからの移動
 		int ix = mv.m_src - 'F';
-		for (int i = N_FREECELL-1; --i > ix; ) {
+		for (int i = N_FREECELL-1; --i >= ix; ) {
 			m_freeCell[i+1] = m_freeCell[i];
 		}
 		m_freeCell[ix] = cd;

@@ -50,6 +50,7 @@ public:
 	std::string	text() const;
 	std::string	hkeyText() const;			//	ハッシュキーテキスト
 	bool	checkNCard() const;				//	カード数チェック
+	int	nFreeCell() const { return m_nFreeCell; }
 	int	nEmptyColumns() const;			//	空欄カラム数を返す
 	int	nMobableDesc() const;			//	移動可能降順列数を返す
 	void	genMoves(Moves&) const;		//	可能着手生成

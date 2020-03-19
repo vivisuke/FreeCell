@@ -11,6 +11,7 @@ unordered_map<string, int> g_map;
 
 int main()
 {
+	//cout << "♠♣♥◆\n";
 	Board bd;
 	assert( bd.checkNCard() );
 	cout << bd.text() << "\n";
@@ -30,8 +31,8 @@ int main()
 			Moves lst;
 			bd.genMoves(lst);
 			for(const auto& mv: lst) {
-				if (mv.m_src == '0' && mv.m_dst == 'F')
-					cout << bd.text() << "\n";
+				//if (mv.m_src == '0' && mv.m_dst == 'F')
+				//	cout << bd.text() << "\n";
 				bd.doMove(mv);
 				if( !bd.checkNCard() )
 					cout << bd.text() << "\n";
@@ -48,7 +49,13 @@ int main()
 					g_map[hk] = n;
 					lst2.push_back(hk);
 				}
+				//if( mv.m_src == 'F' && mv.m_dst == '6' && bd.nFreeCell() > 0 )
+				//	cout << bd.text() << "\n";
+				//if (!bd.checkNCard())
+				//	cout << bd.text() << "\n";
 				bd.unMove(mv);
+				//if( !bd.checkNCard() )
+				//	cout << bd.text() << "\n";
 				assert( bd.checkNCard() );
 			}
 		}

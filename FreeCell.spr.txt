@@ -35,7 +35,7 @@
 							詳細：フリーセルへカードを移動しても m_nFreeCell がインクリメントされていない？
 							原因：Board::set() で m_nFreeCell が設定されていない
 ● C 03/20             ToDo 生成した局面までの手順を表示可能に
-● C 03/20             ToDo 
+◎ C 03/20 03/20 0.001 問題 フリーセルからの移動を unMove() すると、m_nFreeCell が不正になる場合がある
 ● C 03/20             ToDo 
 ● C 03/20             ToDo 
 ● C 03/20             ToDo 
