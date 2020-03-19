@@ -54,6 +54,14 @@ string to_card_string(card_t c)
 	return txt;
 }
 //----------------------------------------------------------------------
+string Move::text() const
+{
+	string txt;
+	txt += m_src;
+	txt += m_dst;
+	return txt;
+}
+//----------------------------------------------------------------------
 Board::Board()
 {
 	init();

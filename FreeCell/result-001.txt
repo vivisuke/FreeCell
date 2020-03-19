@@ -1,0 +1,97 @@
+﻿A:  .  .  .  .
+F:  .  .  .  .  (nFreeCell = 0)
+0: SJ HA C2 C8 C6 H9 H3
+1: DA D3 ST DT H5 S3 D7
+2: HJ S6 SA HK H2 D8 C5
+3: D2 DJ CA H6 CT H4 CQ
+4: D4 S2 D5 D9 SK C7
+5: S5 H7 SQ D6 S8 C4
+6: H8 CJ C3 C9 HT DK
+7: HQ S4 DQ S7 CK S9
+
+#1 Move: 0F
+A:  .  .  .  .
+F: H3  .  .  .  (nFreeCell = 1)
+0: SJ HA C2 C8 C6 H9
+1: DA D3 ST DT H5 S3 D7
+2: HJ S6 SA HK H2 D8 C5
+3: D2 DJ CA H6 CT H4 CQ
+4: D4 S2 D5 D9 SK C7
+5: S5 H7 SQ D6 S8 C4
+6: H8 CJ C3 C9 HT DK
+7: HQ S4 DQ S7 CK S9
+
+#2 Move: 5G
+A:  .  .  .  .
+F: H3 C4  .  .  (nFreeCell = 2)
+0: SJ HA C2 C8 C6 H9
+1: DA D3 ST DT H5 S3 D7
+2: HJ S6 SA HK H2 D8 C5
+3: D2 DJ CA H6 CT H4 CQ
+4: D4 S2 D5 D9 SK C7
+5: S5 H7 SQ D6 S8
+6: H8 CJ C3 C9 HT DK
+7: HQ S4 DQ S7 CK S9
+
+#3 Move: 50
+A:  .  .  .  .
+F: H3 C4  .  .  (nFreeCell = 2)
+0: SJ HA C2 C8 C6 H9 S8
+1: DA D3 ST DT H5 S3 D7
+2: HJ S6 SA HK H2 D8 C5
+3: D2 DJ CA H6 CT H4 CQ
+4: D4 S2 D5 D9 SK C7
+5: S5 H7 SQ D6
+6: H8 CJ C3 C9 HT DK
+7: HQ S4 DQ S7 CK S9
+
+#4 Move: 54
+A:  .  .  .  .
+F: H3 C4  .  .  (nFreeCell = 2)
+0: SJ HA C2 C8 C6 H9 S8
+1: DA D3 ST DT H5 S3 D7
+2: HJ S6 SA HK H2 D8 C5
+3: D2 DJ CA H6 CT H4 CQ
+4: D4 S2 D5 D9 SK C7 D6
+5: S5 H7 SQ
+6: H8 CJ C3 C9 HT DK
+7: HQ S4 DQ S7 CK S9
+
+#5 Move: 56
+A:  .  .  .  .
+F: H3 C4  .  .  (nFreeCell = 2)
+0: SJ HA C2 C8 C6 H9 S8
+1: DA D3 ST DT H5 S3 D7
+2: HJ S6 SA HK H2 D8 C5
+3: D2 DJ CA H6 CT H4 CQ
+4: D4 S2 D5 D9 SK C7 D6
+5: S5 H7
+6: H8 CJ C3 C9 HT DK SQ
+7: HQ S4 DQ S7 CK S9
+
+#6 Move: 50
+A:  .  .  .  .
+F: H3 C4  .  .  (nFreeCell = 2)
+0: SJ HA C2 C8 C6 H9 S8 H7
+1: DA D3 ST DT H5 S3 D7
+2: HJ S6 SA HK H2 D8 C5
+3: D2 DJ CA H6 CT H4 CQ
+4: D4 S2 D5 D9 SK C7 D6
+5: S5
+6: H8 CJ C3 C9 HT DK SQ
+7: HQ S4 DQ S7 CK S9
+
+#7 Move: 54
+A:  .  .  .  .
+F: H3 C4  .  .  (nFreeCell = 2)
+0: SJ HA C2 C8 C6 H9 S8 H7
+1: DA D3 ST DT H5 S3 D7
+2: HJ S6 SA HK H2 D8 C5
+3: D2 DJ CA H6 CT H4 CQ
+4: D4 S2 D5 D9 SK C7 D6 S5
+5:
+6: H8 CJ C3 C9 HT DK SQ
+7: HQ S4 DQ S7 CK S9
+
+OK
+

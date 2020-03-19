@@ -33,6 +33,9 @@ public:
 	{
 	}
 public:
+	bool	operator==(const Move& x) const { return m_src == x.m_src && m_dst == x.m_dst; }
+	std::string	text() const;
+public:
 	char		m_src;		//	移動元
 	char		m_dst;		//	移動先
 };

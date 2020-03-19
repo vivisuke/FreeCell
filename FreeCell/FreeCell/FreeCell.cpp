@@ -20,6 +20,7 @@ int main()
 	auto start = std::chrono::system_clock::now();
 	auto hktxt = bd.hkeyText();
 	int mxnm = 0;		//	最大移動可能降順列数
+	string mxnmhk;		//	最大移動可能降順列数を与える局面ハッシュテキスト
 	g_map.clear();
 	g_map[hktxt] = Move(0,0);
 	vector<string> lst, lst2;
@@ -43,6 +44,7 @@ int main()
 					//mxnm = max(mxnm, bd.nMobableDesc());
 					auto nm = bd.nMobableDesc();
 					if( nm > mxnm ) {
+						mxnmhk = bd.hkeyText();
 						mxnm = nm;
 						if( mxnm > 5 )
 							cout << "nm = " << mxnm << "\n" << bd.text() << "\n";
@@ -69,6 +71,27 @@ int main()
     auto dur = end - start;        // 要した時間を計算
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
     cout << "dur: " << msec << "msec\n";
+    //	手順表示
+    string hk = mxnmhk;
+	bd.set(hk);
+	Moves mvs;
+    for (;;) {
+    	Move mv = g_map[hk];
+	    if( mv == Move(0,0) ) break;
+	    //mvs.push_back(mv);
+	    mvs.insert(mvs.begin(), mv);		//	手数は少ないのでおｋ
+	    bd.unMove(mv);
+	    //cout << "Move: " << mv.text() << "\n";
+		//cout << bd.text() << "\n";
+		hk = bd.hkeyText();
+    }
+	cout << bd.text() << "\n";
+	int cnt = 0;
+    for(const auto& mv: mvs) {
+	    cout << "#" << ++cnt << " Move: " << mv.text() << "\n";
+	    bd.doMove(mv);
+		cout << bd.text() << "\n";
+    }
     //
 #if	0
 	auto start = std::chrono::system_clock::now();
