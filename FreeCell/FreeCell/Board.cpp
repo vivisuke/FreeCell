@@ -64,8 +64,8 @@ Board::Board(const Board& x)
 	for (int i = 0; i < N_FREECELL+1; ++i) {
 		m_freeCell[i] = x.m_freeCell[i];
 	}
-	for (int i = 0; i < N_GOAL; ++i) {
-		m_goal[i] = x.m_goal[i];
+	for (int i = 0; i < N_HOME; ++i) {
+		m_home[i] = x.m_home[i];
 	}
 	for (int i = 0; i < N_COLUMN; ++i) {
 		m_column[i] = x.m_column[i];
@@ -77,8 +77,8 @@ bool Board::operator==(const Board& x) const
 	for (int i = 0; i < N_FREECELL+1; ++i) {
 		if( m_freeCell[i] != x.m_freeCell[i] ) return false;
 	}
-	for (int i = 0; i < N_GOAL; ++i) {
-		if( m_goal[i] != x.m_goal[i] ) return false;
+	for (int i = 0; i < N_HOME; ++i) {
+		if( m_home[i] != x.m_home[i] ) return false;
 	}
 	for (int i = 0; i < N_COLUMN; ++i) {
 		if( m_column[i] != x.m_column[i] ) return false;
@@ -89,7 +89,7 @@ void Board::init()		//	初期化・カードを配る
 {
 	m_nFreeCell = 0;		//	フリーセルのカード数
 	for(auto& x: m_freeCell) x = 0;
-	for(auto& x: m_goal) x = 0;
+	for(auto& x: m_home) x = 0;
 	for(auto& x: m_column) x.clear();
 	vector<card_t> deck;
 	card_t col = 0;
@@ -107,9 +107,9 @@ std::string Board::text() const
 {
 	string txt;
 	txt += "A: ";
-	//for(auto x: m_goal) txt += to_card_string(x);
+	//for(auto x: m_home) txt += to_card_string(x);
 	for (int i = 0; i < N_COL; ++i) {
-		txt += to_card_string(m_goal[i] + (i<<4));
+		txt += to_card_string(m_home[i] + (i<<4));
 	}
 	txt += "\n";
 	txt += "F: ";
@@ -130,12 +130,12 @@ std::string Board::text() const
 std::string Board::hkeyText() const			//	ハッシュキーテキスト
 {
 	string txt;
-	int sz = N_FREECELL + N_GOAL;
+	int sz = N_FREECELL + N_HOME;
 	for(const auto& lst: m_column) sz += lst.size() + 1;		//	+1 for '\0'
 	txt.resize(sz);
 	memcpy(&txt[0], (cchar*)&m_freeCell[0], N_FREECELL);		//	フリーセル状態
-	memcpy(&txt[N_FREECELL], (cchar*)&m_goal[0], N_GOAL);	//	ゴール状態
-	int ix = N_FREECELL + N_GOAL;
+	memcpy(&txt[N_FREECELL], (cchar*)&m_home[0], N_HOME);	//	ゴール状態
+	int ix = N_FREECELL + N_HOME;
 	for(const auto& lst: m_column) {
 		if( lst.empty() ) {
 			txt[ix++] = '\0';		//	ヌルターミネート
@@ -150,8 +150,8 @@ std::string Board::hkeyText() const			//	ハッシュキーテキスト
 void Board::set(const std::string& txt)
 {
 	memcpy(&m_freeCell[0], (cchar*)&txt[0], N_FREECELL);		//	フリーセル状態
-	memcpy(&m_goal[0], (cchar*)&txt[N_FREECELL], N_GOAL);	//	ゴール状態
-	int ix = N_FREECELL + N_GOAL;
+	memcpy(&m_home[0], (cchar*)&txt[N_FREECELL], N_HOME);	//	ゴール状態
+	int ix = N_FREECELL + N_HOME;
 	for(auto& lst: m_column) {
 		lst.clear();
 		while( txt[ix] != '\0' ) lst.push_back(txt[ix++]);
@@ -174,7 +174,7 @@ void Board::genMoves(Moves& lst) const		//	可能着手生成
 			}
 			//	ゴールへの移動
 			auto gi = cardColIX(sc);
-			if( m_goal[gi] == cardNum(sc) - 1 )
+			if( m_home[gi] == cardNum(sc) - 1 )
 				lst.emplace_back('0'+s, 'A'+gi);			//	ゴールへの移動
 		}
 	}
@@ -188,7 +188,7 @@ void Board::genMoves(Moves& lst) const		//	可能着手生成
 		}
 		//	ゴールへの移動
 		auto gi = cardColIX(sc);
-		if( m_goal[gi] == cardNum(sc) - 1 )
+		if( m_home[gi] == cardNum(sc) - 1 )
 			lst.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
 	}
 }
@@ -219,7 +219,7 @@ void Board::doMove(const Move& mv)
 	} else if( mv.m_dst <= 'D' ) {		//	ゴールへの移動
 		int ix = cardColIX(cd);
 		assert( ix == mv.m_dst - 'A' );
-		m_goal[ix] += 1;
+		m_home[ix] += 1;
 	}
 }
 void Board::unMove(const Move& mv)
@@ -237,8 +237,8 @@ void Board::unMove(const Move& mv)
 		m_nFreeCell -= 1;
 	} else if( mv.m_dst <= 'D' ) {		//	ゴールへの移動
 		int ix = mv.m_dst - 'A';
-		cd = (ix << 4) + m_goal[ix];
-		m_goal[ix] -= 1;
+		cd = (ix << 4) + m_home[ix];
+		m_home[ix] -= 1;
 	}
 	if( isdigit(mv.m_src) ) {		//	列からの移動
 		int ix = mv.m_src - '0';

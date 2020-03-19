@@ -5,7 +5,7 @@
 
 #define		N_FREECELL		4			//	一時置き場の数
 #define		N_COLUMN		8
-#define		N_GOAL				4
+#define		N_HOME			4
 #define		SPADE				0x00
 #define		CLUB					0x10
 #define		HEART				0x20
@@ -58,6 +58,6 @@ public:
 private:
 	int			m_nFreeCell;		//	フリーセルのカード数
 	card_t		m_freeCell[N_FREECELL+1];		//	+1 for 番人
-	card_t		m_goal[N_GOAL];
+	card_t		m_home[N_HOME];
 	std::vector<card_t>	m_column[N_COLUMN];
 };

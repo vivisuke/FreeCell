@@ -23,8 +23,18 @@
 ◎ C 03/19 03/19 0.001 ToDo Board::set(hkeyText)
 ◎ C 03/19 03/19 0.001 ToDo Board::operator!=(const Board&)
 ◎ C 03/19 03/19 0.001 問題 Board::hkeyText()：空列があるとクラッシュ
-● C 03/19             ToDo 
-● C 03/19             ToDo 
-● C 03/19             ToDo 
-● C 03/19             ToDo 
+● C 03/19             ToDo 移動可能数６以上を発見するまで探索
+◎ C 03/20 03/20 0.001 ToDo goal は home に改名
+● C 03/20             ToDo map[] の値は着手（Move）に
+● C 03/20             ToDo 降順列をまとめて移動可能に（Move に枚数を追加？）
+● C 03/20             ToDo 移動可能降順列数を計算可能に
+● C 03/20             ToDo 空き列数計算
+● C 03/20             ToDo 
+● C 03/20             ToDo 
+● C 03/20             ToDo 
+● C 03/20             ToDo 
+● C 03/20             ToDo 
+● C 03/20             ToDo 
+● C 03/20             ToDo 
+● C 03/20             ToDo 
 
