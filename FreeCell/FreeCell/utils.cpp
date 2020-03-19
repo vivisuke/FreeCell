@@ -3,8 +3,8 @@
 using namespace std;
 
 random_device g_rd;
-#if	1
+#if	0
 mt19937 g_mt(g_rd());
 #else
-mt19937 g_mt(4);
+mt19937 g_mt(0);
 #endif

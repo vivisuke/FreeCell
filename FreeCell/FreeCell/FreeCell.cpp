@@ -12,6 +12,7 @@ unordered_map<string, int> g_map;
 int main()
 {
 	Board bd;
+	assert( bd.checkNCard() );
 	cout << bd.text() << "\n";
 	//
 	auto start = std::chrono::system_clock::now();
@@ -25,10 +26,16 @@ int main()
 		lst2.clear();	//	末端ノード
 		for(const auto& txt: lst) {
 			bd.set(txt);
+			assert(bd.checkNCard());
 			Moves lst;
 			bd.genMoves(lst);
 			for(const auto& mv: lst) {
+				if (mv.m_src == '0' && mv.m_dst == 'F')
+					cout << bd.text() << "\n";
 				bd.doMove(mv);
+				if( !bd.checkNCard() )
+					cout << bd.text() << "\n";
+				assert( bd.checkNCard() );
 				auto hk = bd.hkeyText();
 				if( g_map.find(hk) == g_map.end() ) {
 					//mxnm = max(mxnm, bd.nMobableDesc());
@@ -42,6 +49,7 @@ int main()
 					lst2.push_back(hk);
 				}
 				bd.unMove(mv);
+				assert( bd.checkNCard() );
 			}
 		}
 		lst.swap(lst2);		//	末端ノードリストを lst に転送

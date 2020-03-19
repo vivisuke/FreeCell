@@ -106,6 +106,7 @@ void Board::init()		//	初期化・カードを配る
 std::string Board::text() const
 {
 	string txt;
+	txt += "nFreeCell = " + to_string(m_nFreeCell) + "\n";
 	txt += "A: ";
 	//for(auto x: m_home) txt += to_card_string(x);
 	for (int i = 0; i < N_COL; ++i) {
@@ -150,6 +151,7 @@ std::string Board::hkeyText() const			//	ハッシュキーテキスト
 void Board::set(const std::string& txt)
 {
 	memcpy(&m_freeCell[0], (cchar*)&txt[0], N_FREECELL);		//	フリーセル状態
+	for(m_nFreeCell = 0; m_freeCell[m_nFreeCell] != 0; ++m_nFreeCell) {}
 	memcpy(&m_home[0], (cchar*)&txt[N_FREECELL], N_HOME);	//	ゴール状態
 	int ix = N_FREECELL + N_HOME;
 	for(auto& lst: m_column) {
@@ -168,6 +170,21 @@ int Board::nEmptyColumns() const			//	空欄カラム数を返す
 int Board::nMobableDesc() const			//	移動可能降順列数を返す
 {
 	return (nEmptyColumns() + 1) * (N_FREECELL + 1 - m_nFreeCell);
+}
+bool Board::checkNCard() const				//	カード数チェック
+{
+	int n = m_nFreeCell;
+	for (int i = 0; i < m_nFreeCell; ++i) {
+		if( m_freeCell[i] == 0 )
+			return false;
+	}
+	for (int i = m_nFreeCell; i < N_FREECELL; ++i) {
+		if( m_freeCell[i] != 0 )
+			return false;
+	}
+	for(auto c: m_home) n += c;
+	for(const auto& lst: m_column) n += lst.size();
+	return n == N_CARD;
 }
 void Board::genMoves(Moves& lst) const		//	可能着手生成
 {
