@@ -165,6 +165,10 @@ int Board::nEmptyColumns() const			//	空欄カラム数を返す
 		if( lst.empty() ) ++n;
 	return n;
 }
+int Board::nMobableDesc() const			//	移動可能降順列数を返す
+{
+	return (nEmptyColumns() + 1) * (N_FREECELL + 1 - m_nFreeCell);
+}
 void Board::genMoves(Moves& lst) const		//	可能着手生成
 {
 	lst.clear();
