@@ -7,7 +7,8 @@
 
 using namespace std;
 
-unordered_map<string, int> g_map;
+//unordered_map<string, int> g_map;
+unordered_map<string, Move> g_map;
 
 int main()
 {
@@ -20,7 +21,7 @@ int main()
 	auto hktxt = bd.hkeyText();
 	int mxnm = 0;		//	最大移動可能降順列数
 	g_map.clear();
-	g_map[hktxt] = 0;
+	g_map[hktxt] = Move(0,0);
 	vector<string> lst, lst2;
 	lst.push_back(hktxt);
 	for (int n = 1; n <= 10; ++n) {		//	手数
@@ -46,7 +47,8 @@ int main()
 						if( mxnm > 5 )
 							cout << "nm = " << mxnm << "\n" << bd.text() << "\n";
 					}
-					g_map[hk] = n;
+					//g_map[hk] = n;
+					g_map[hk] = mv;
 					lst2.push_back(hk);
 				}
 				//if( mv.m_src == 'F' && mv.m_dst == '6' && bd.nFreeCell() > 0 )
