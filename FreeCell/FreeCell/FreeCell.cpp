@@ -473,6 +473,7 @@ bool searchHomePlusMovable6(Board& bd)
 //	現状態から、評価値が増加する状態を探す
 bool search(Board& bd)
 {
+	if( bd.nCardHome() >= 52) return false;
 	//const int N_MOVABLE = 6;
 	//const int nCardHome0 = bd.nCardHome();		//	現ホームカード枚数
 	//const int ev0 = bd.eval();
