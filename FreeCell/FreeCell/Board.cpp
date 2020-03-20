@@ -283,8 +283,16 @@ void Board::doMove(const Move& mv)
 	card_t cd = 0;		//	移動カード
 	if( isdigit(mv.m_src) ) {		//	列からの移動
 		int ix = mv.m_src - '0';
-		cd = m_column[ix].back();
-		m_column[ix].pop_back();
+		if( mv.m_n == 1 ) {
+			cd = m_column[ix].back();
+			m_column[ix].pop_back();
+		} else {		//	列→列 の降順列移動
+			assert( isdigit(mv.m_dst) );
+			int dst = mv.m_dst - '0';
+			m_column[dst].insert(m_column[dst].end(), m_column[ix].end() - mv.m_n, m_column[ix].end());
+			m_column[ix].erase(m_column[ix].end() - mv.m_n, m_column[ix].end());
+			return;
+		}
 	} else {		//	フリーセルからの移動
 		int ix = mv.m_src - 'F';
 		//if( !(ix >= 0 && ix < m_nFreeCell) ) {

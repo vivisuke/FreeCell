@@ -26,6 +26,9 @@ int main()
 	cout << "Moves: ";
 	for(const auto& mv: mvs) cout << mv.text() << " ";
 	cout << "\n\n";
+	Move mv('0', '6', 3);
+	bd.doMove(mv);
+	cout << bd.text() << "\n";
 	//
 #if	0
 	auto start = std::chrono::system_clock::now();
