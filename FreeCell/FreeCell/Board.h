@@ -27,17 +27,20 @@ typedef unsigned char card_t;
 //		カスケード：	'0'～'7'
 struct Move {
 public:
-	Move(char src = 0, char dst = 0)
+	Move(char src = 0, char dst = 0, char n = 1)
 		: m_src(src)
 		, m_dst(dst)
+		, m_n(n)
 	{
 	}
 public:
-	bool	operator==(const Move& x) const { return m_src == x.m_src && m_dst == x.m_dst; }
+	bool	operator==(const Move& x) const
+	{ return m_src == x.m_src && m_dst == x.m_dst && m_n == x.m_n; }
 	std::string	text() const;
 public:
 	char		m_src;		//	移動元
 	char		m_dst;		//	移動先
+	char		m_n;			//	移動枚数（列→列の場合のみ有効）
 };
 
 typedef std::vector<Move> Moves;

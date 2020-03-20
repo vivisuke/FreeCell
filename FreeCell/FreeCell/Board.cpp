@@ -59,6 +59,8 @@ string Move::text() const
 	string txt;
 	txt += m_src;
 	txt += m_dst;
+	if( m_n != 1 )
+		txt += "*" + to_string((int)m_n);
 	return txt;
 }
 //----------------------------------------------------------------------
@@ -213,24 +215,24 @@ bool Board::checkNCard() const				//	カード数チェック
 	for(const auto& lst: m_column) n += lst.size();
 	return n == N_CARD;
 }
-void Board::genMoves(Moves& lst) const		//	可能着手生成
+void Board::genMoves(Moves& mvs) const		//	可能着手生成
 {
-	lst.clear();
+	mvs.clear();
 	for (int s = 0; s != N_COLUMN; ++s) {
 		if( !m_column[s].empty() ) {				//	列[i] が空でない場合
 			if( m_nFreeCell != N_FREECELL ) {
-				lst.emplace_back('0'+s, 'F'+m_nFreeCell);			//	フリーセルへの移動
+				mvs.emplace_back('0'+s, 'F'+m_nFreeCell);			//	フリーセルへの移動
 			}
 			card_t sc = m_column[s].back();		//	末尾カード
 			//	別の列末尾への移動
 			for (int d = 0; d != N_COLUMN; ++d) {
 				if( s != d && !m_column[d].empty() && canPushBack(m_column[d].back(), sc) )
-					lst.emplace_back('0'+s, '0'+d);			//	i から d への移動
+					mvs.emplace_back('0'+s, '0'+d);			//	i から d への移動
 			}
 			//	ゴールへの移動
 			auto gi = cardColIX(sc);
 			if( m_home[gi] == cardNum(sc) - 1 )
-				lst.emplace_back('0'+s, 'A'+gi);			//	ゴールへの移動
+				mvs.emplace_back('0'+s, 'A'+gi);			//	ゴールへの移動
 		}
 	}
 	//	フリーセルから列・ゴールへの移動
@@ -239,13 +241,35 @@ void Board::genMoves(Moves& lst) const		//	可能着手生成
 		//	別の列末尾への移動
 		for (int d = 0; d != N_COLUMN; ++d) {
 			if( !m_column[d].empty() && canPushBack(m_column[d].back(), sc) )
-				lst.emplace_back('F'+s, '0'+d);			//	i から d への移動
+				mvs.emplace_back('F'+s, '0'+d);			//	i から d への移動
 		}
 		//	ゴールへの移動
 		auto gi = cardColIX(sc);
 		if( m_home[gi] == cardNum(sc) - 1 )
-			lst.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
+			mvs.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
 	}
+	//	列→列 降順列移動
+	const int mxnm = nMobableDesc();
+	for (int s = 0; s != N_COLUMN; ++s) {
+		const auto& lst = m_column[s];
+		if( lst.size() > 1 ) {
+			const int SZ = lst.size();
+			int n = 1;		//	降順列枚数
+			while( SZ-n-1 >= 0 && n < mxnm && canPushBack(lst[SZ-n-1], lst[SZ-n]) ) ++n;
+			if( n > 1 ) {
+				auto top = lst[SZ-n];
+				for (int d = 0; d != N_COLUMN; ++d) {
+					if( d == s ) continue;
+					if( m_column[d].empty() ) {
+					} else {
+						if( canPushBack(m_column[d].back(), top) )
+							mvs.emplace_back('0'+s, '0'+d, (char)n);
+					}
+				}
+			}
+		}
+	}
+	
 }
 void Board::doMove(const Move& mv)
 {
