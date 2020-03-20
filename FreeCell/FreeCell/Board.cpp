@@ -200,6 +200,10 @@ int Board::nMobableDesc() const			//	移動可能降順列数を返す
 {
 	return (nEmptyColumns() + 1) * (N_FREECELL + 1 - m_nFreeCell);
 }
+int Board::nMobableDescToEmpty() const			//	空列への移動可能降順列数を返す
+{
+	return nEmptyColumns() * (N_FREECELL + 1 - m_nFreeCell);
+}
 bool Board::checkNCard() const				//	カード数チェック
 {
 	int n = m_nFreeCell;
@@ -255,8 +259,9 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 		if( m_home[gi] == cardNum(sc) - 1 )
 			mvs.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
 	}
-	//	列→列 降順列移動（空列への移動は生成しない）
+	//	列→列 降順列移動、空列への移動も生成
 	const int mxnm = nMobableDesc();
+	const int mxnm2 = nMobableDescToEmpty();		//	空列への移動可能枚数
 	for (int s = 0; s != N_COLUMN; ++s) {
 		const auto& lst = m_column[s];
 		if( lst.size() > 1 ) {
@@ -268,6 +273,8 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 				for (int d = 0; d != N_COLUMN; ++d) {
 					if( d == s ) continue;
 					if( m_column[d].empty() ) {
+						int n2 = min(n, mxnm2);		//	移動可能枚数
+						mvs.emplace_back('0'+s, '0'+d, (char)n2);
 					} else {
 						if( canPushBack(m_column[d].back(), top) )
 							mvs.emplace_back('0'+s, '0'+d, (char)n);
