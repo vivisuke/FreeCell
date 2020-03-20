@@ -20,6 +20,13 @@ int main()
 	searchMovable6(bd);		//	初期状態から降順列６枚以上移動可能状態を探す
 	while( bd.nCardHome() < 52 ) {
 		//if( !searchHomePlusMovable6(bd) )		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
+		Move mv;
+		while( bd.genSafeMove(mv) ) {
+			cout << "Move: " << mv.text() << "\n";
+			bd.doMove(mv);
+			cout << bd.text() << "\n";
+			cout << "eval = " << bd.eval() << "\n";
+		}
 		if( !search(bd) )		//	現状態から、評価値が増加する状態を探す
 			break;
 		cout << "eval = " << bd.eval() << "\n";
@@ -65,9 +72,9 @@ int main()
 		for(const auto& txt: lst) {
 			bd.set(txt);
 			assert(bd.checkNCard());
-			Moves lst;
-			bd.genMoves(lst);
-			for(const auto& mv: lst) {
+			Moves mvs;
+			bd.genMoves(mvs);
+			for(const auto& mv: mvs) {
 				//if (mv.m_src == '0' && mv.m_dst == 'F')
 				//	cout << bd.text() << "\n";
 				bd.doMove(mv);
@@ -156,9 +163,9 @@ int main()
 		for(const auto& txt: lst) {
 			bd.set(txt);
 			assert(bd.checkNCard());
-			Moves lst;
-			bd.genMoves(lst);
-			for(const auto& mv: lst) {
+			Moves mvs;
+			bd.genMoves(mvs);
+			for(const auto& mv: mvs) {
 				//if (mv.m_src == '0' && mv.m_dst == 'F')
 				//	cout << bd.text() << "\n";
 				bd.doMove(mv);
@@ -236,9 +243,9 @@ int main()
 		lst2.clear();	//	末端ノード
 		for(const auto& txt: lst) {
 			bd.set(txt);
-			Moves lst;
-			bd.genMoves(lst);
-			for(const auto& mv: lst) {
+			Moves mvs;
+			bd.genMoves(mvs);
+			for(const auto& mv: mvs) {
 				bd.doMove(mv);
 				auto hk = bd.hkeyText();
 				if( g_map.find(hk) == g_map.end() ) {
@@ -270,11 +277,11 @@ int main()
 	assert(b2 == bd);
 	//
 	Moves lst;
-	bd.genMoves(lst);
+	bd.genMoves(mvs);
 	cout << "Moves: ";
-	for(const auto& mv: lst) cout << mv.m_src << mv.m_dst << " ";
+	for(const auto& mv: mvs) cout << mv.m_src << mv.m_dst << " ";
 	cout << "\n\n";
-	for(const auto& mv: lst) {
+	for(const auto& mv: mvs) {
 		cout << "Move " << mv.m_src << mv.m_dst << "\n";
 		bd.doMove(mv);
 		cout << bd.text() << "\n";
@@ -290,11 +297,11 @@ int main()
 		if( g_map.find(hk) != g_map.end() )
 			break;
 		g_map[hk] = i;
-		Moves lst;
-		bd.genMoves(lst);
+		Moves mvs;
+		bd.genMoves(mvs);
 		if( lst.empty() ) break;
 		cout << "Moves: ";
-		for(const auto& mv: lst) cout << mv.m_src << mv.m_dst << " ";
+		for(const auto& mv: mvs) cout << mv.m_src << mv.m_dst << " ";
 		cout << "\n\n";
 		Move mv = lst[g_mt() % lst.size()];
 		cout << (i+1) << ") Move " << mv.m_src << mv.m_dst << "\n";
@@ -322,9 +329,9 @@ void searchMovable6(Board& bd)		//	初期状態から降順列６枚以上移動
 		for(const auto& txt: lst) {
 			bd.set(txt);
 			assert(bd.checkNCard());
-			Moves lst;
-			bd.genMoves(lst);
-			for(const auto& mv: lst) {
+			Moves mvs;
+			bd.genMoves(mvs);
+			for(const auto& mv: mvs) {
 				bd.doMove(mv);
 				if( !bd.checkNCard() )
 					cout << bd.text() << "\n";
@@ -397,9 +404,9 @@ bool searchHomePlusMovable6(Board& bd)
 		for(const auto& txt: lst) {
 			bd.set(txt);
 			assert(bd.checkNCard());
-			Moves lst;
-			bd.genMoves(lst);
-			for(const auto& mv: lst) {
+			Moves mvs;
+			bd.genMoves(mvs);
+			for(const auto& mv: mvs) {
 				bd.doMove(mv);
 				if( !bd.checkNCard() )
 					cout << bd.text() << "\n";
@@ -479,14 +486,15 @@ bool search(Board& bd)
 	g_map[hktxt] = Move(0,0);
 	vector<string> lst, lst2;
 	lst.push_back(hktxt);
-	for (int n = 1; n <= 8; ++n) {		//	最大８手探索
+	for (int n = 1; n <= 6; ++n) {		//	最大6手探索
 		lst2.clear();	//	末端ノード
 		for(const auto& txt: lst) {
 			bd.set(txt);
 			assert(bd.checkNCard());
-			Moves lst;
-			bd.genMoves(lst);
-			for(const auto& mv: lst) {
+			Moves mvs;
+			bd.genMoves(mvs);
+			if( lst.empty() ) continue;
+			for(const auto& mv: mvs) {
 				bd.doMove(mv);
 				if( !bd.checkNCard() )
 					cout << bd.text() << "\n";
@@ -509,7 +517,8 @@ bool search(Board& bd)
 		lst.swap(lst2);		//	末端ノードリストを lst に転送
 		cout << n << ": lst.size() = " << lst.size() << "\n";
 		//if( found ) break;
-		if( lst.size() >= 1024*1024 ) break;		//	末端ノード数が１Mを超えた場合は探索終了
+		if( lst.size() >= 1024*512 ) break;		//	末端ノード数が0.5Mを超えた場合は探索終了
+		//if( lst.size() >= 1024*1024 ) break;		//	末端ノード数が１Mを超えた場合は探索終了
 	}
 	auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
     auto dur = end - start;        // 要した時間を計算
