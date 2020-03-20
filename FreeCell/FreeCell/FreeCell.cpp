@@ -10,8 +10,13 @@ using namespace std;
 //unordered_map<string, int> g_map;
 unordered_map<string, Move> g_map;
 
+void searchMovable6();		//	初期状態から降順列６枚以上移動可能状態を探す
+
 int main()
 {
+	searchMovable6();		//	初期状態から降順列６枚以上移動可能状態を探す
+	//
+#if	0
 	//cout << "♠♣♥◆\n";
 	Board bd;
 	assert( bd.checkNCard() );
@@ -29,6 +34,7 @@ int main()
 		bd.doMove(mv);
 		cout << bd.text() << "\n";
 	}
+#endif
 	//
 #if	0
 	string hk0 = {0x0c,0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x15,0x11,0x3d,0x2c,0x3b,0x12,0x16,0x25,0x04,0x00,0x22,0x26,
@@ -289,4 +295,75 @@ int main()
 #endif
 	//
     std::cout << "OK\n";
+}
+void searchMovable6()		//	初期状態から降順列６枚以上移動可能状態を探す
+{
+	Board bd;
+	auto start = std::chrono::system_clock::now();
+	auto hktxt = bd.hkeyText();
+	int mxnm = 0;		//	最大移動可能降順列数
+	string mxnmhk;		//	最大移動可能降順列数を与える局面ハッシュテキスト
+	g_map.clear();
+	g_map[hktxt] = Move(0,0);
+	vector<string> lst, lst2;
+	lst.push_back(hktxt);
+	for (int n = 1; n <= 10; ++n) {		//	手数
+		lst2.clear();	//	末端ノード
+		for(const auto& txt: lst) {
+			bd.set(txt);
+			assert(bd.checkNCard());
+			Moves lst;
+			bd.genMoves(lst);
+			for(const auto& mv: lst) {
+				bd.doMove(mv);
+				if( !bd.checkNCard() )
+					cout << bd.text() << "\n";
+				assert( bd.checkNCard() );
+				auto hk = bd.hkeyText();
+				if( g_map.find(hk) == g_map.end() ) {
+					auto nm = bd.nMobableDesc();
+					if( nm > mxnm ) {
+						mxnmhk = bd.hkeyText();
+						mxnm = nm;
+						if( mxnm > 5 )
+							cout << "nm = " << mxnm << "\n" << bd.text() << "\n";
+					}
+					g_map[hk] = mv;
+					lst2.push_back(hk);
+				}
+				bd.unMove(mv);
+				assert( bd.checkNCard() );
+			}
+		}
+		lst.swap(lst2);		//	末端ノードリストを lst に転送
+		cout << n << ": lst.size() = " << lst.size() << ", mxnm = " << mxnm << "\n";
+		if( mxnm > 5 ) break;
+	}
+	auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+    auto dur = end - start;        // 要した時間を計算
+    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+    cout << "dur: " << msec << "msec\n";
+    //	手順表示
+    string hk = mxnmhk;
+	bd.set(hk);
+	Moves mvs;
+    for (;;) {
+    	Move mv = g_map[hk];
+	    if( mv == Move(0,0) ) break;
+	    mvs.insert(mvs.begin(), mv);		//	手数は少ないのでおｋ
+	    bd.unMove(mv);
+		hk = bd.hkeyText();
+    }
+	cout << bd.text() << "\n";
+	int cnt = 0;
+    for(const auto& mv: mvs) {
+	    cout << "#" << ++cnt << " Move: " << mv.text() << "\n";
+	    bd.doMove(mv);
+		cout << bd.text() << "\n";
+    }
+	cout << "hkey = " << bd.hkeyHex() << "\n";
+	bd.genMoves(mvs);
+	cout << "Moves: ";
+	for(const auto& mv: mvs) cout << mv.text() << " ";
+	cout << "\n\n";
 }

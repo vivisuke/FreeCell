@@ -62,7 +62,7 @@ public:
 	std::string	hkeyText() const;			//	ハッシュキーテキスト
 	std::string	hkeyHex() const;			//	ハッシュキー１６進数テキスト
 	bool	checkNCard() const;				//	カード数チェック
-	int	nFreeCell() const { return m_nFreeCell; }
+	int	nCardFreeCell() const { return m_nCardFreeCell; }
 	int	nEmptyColumns() const;			//	空欄カラム数を返す
 	int	nMobableDesc() const;			//	移動可能降順列数を返す
 	int	nMobableDescToEmpty() const;	//	空列への移動可能降順列数を返す
@@ -76,7 +76,7 @@ public:
 	void	doMove(const Move&);
 	void	unMove(const Move&);
 private:
-	int			m_nFreeCell;		//	フリーセルのカード数
+	int			m_nCardFreeCell;		//	フリーセルのカード数
 	card_t		m_freeCell[N_FREECELL+1];		//	+1 for 番人
 	card_t		m_home[N_HOME];
 	std::vector<card_t>	m_column[N_COLUMN];

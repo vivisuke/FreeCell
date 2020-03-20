@@ -45,10 +45,14 @@
 							詳細：ただし、以前の5枚超移動可能状態では探索を中止しない
 ◎ C 03/20 03/20 0.001 ToDo Board::genSaveMove()：安全にホームに移動できる着手生成
 ◎ C 03/20 03/20 0.001 ToDo Board::genMoves()：列→空列の複数枚数移動手生成
-● C 03/20             ToDo 
-● C 03/20             ToDo 
-● C 03/20             ToDo 
-● C 03/20             ToDo 
-● C 03/20             ToDo 
-● C 03/20             ToDo 
-
+◎ C 03/21 03/21 0.001 ToDo 初期状態から5枚超移動可能状態を探索する部分を関数化
+◎ C 03/21 03/21 0.001 ToDo m_nFreeCell は空き数と紛らわしいので、m_nCardFreeCell に改名
+● C 03/21             ToDo 
+● C 03/21             ToDo 
+● C 03/21             ToDo 
+● C 03/21             ToDo 
+● C 03/21             ToDo 
+● C 03/21             ToDo 
+● C 03/21             ToDo 
+● C 03/21             ToDo 
+● C 03/21             ToDo 
