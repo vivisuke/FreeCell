@@ -320,9 +320,17 @@ void Board::unMove(const Move& mv)
 {
 	card_t cd = 0;		//	移動カード
 	if( isdigit(mv.m_dst) ) {		//	列への移動
-		int ix = mv.m_dst - '0';
-		cd = m_column[ix].back();
-		m_column[ix].pop_back();
+		int dst = mv.m_dst - '0';
+		if( mv.m_n == 1 ) {
+			cd = m_column[dst].back();
+			m_column[dst].pop_back();
+		} else {
+			assert( isdigit(mv.m_dst) );
+			int src = mv.m_src - '0';
+			m_column[src].insert(m_column[src].end(), m_column[dst].end() - mv.m_n, m_column[dst].end());
+			m_column[dst].erase(m_column[dst].end() - mv.m_n, m_column[dst].end());
+			return;
+		}
 	} else if( mv.m_dst >= 'F' ) {		//	フリーセルへの移動
 		int ix = mv.m_dst - 'F';
 		assert( ix >= 0 && ix < m_nFreeCell );
