@@ -12,7 +12,12 @@
 #define		DIAMOND			0x30
 #define		COL_MASK			0xf0
 #define		BR_MASK			0x20
+#define		NUM_BITS			4
 #define		NUM_MASK		0x0f
+#define		IX_SPADE			(SPADE>>NUM_BITS)
+#define		IX_CLUB			(CLUB>>NUM_BITS)
+#define		IX_HEART			(HEART>>NUM_BITS)
+#define		IX_DIAMOND		(DIAMOND>>NUM_BITS)
 #define		N_CARD			(4*13)
 #define		N_COL				4
 #define		N_NUM				13
@@ -60,10 +65,13 @@ public:
 	int	nFreeCell() const { return m_nFreeCell; }
 	int	nEmptyColumns() const;			//	空欄カラム数を返す
 	int	nMobableDesc() const;			//	移動可能降順列数を返す
-	int	nMobableDescToEmpty() const;			//	空列への移動可能降順列数を返す
+	int	nMobableDescToEmpty() const;	//	空列への移動可能降順列数を返す
 	void	genMoves(Moves&) const;		//	可能着手生成
+	bool	genSafeMove(Move&) const;		//	安全にホーム移動できる着手生成
+	bool	isSafeToHome(card_t) const;		//	カードを安全にホーム移動できるか？
 public:
 	void	init();		//	初期化・カードを配る
+	void	initNoShuffle();		//	初期化・カードを配る
 	void	set(const std::string&);
 	void	doMove(const Move&);
 	void	unMove(const Move&);

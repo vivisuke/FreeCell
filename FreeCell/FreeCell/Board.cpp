@@ -18,7 +18,7 @@ mt19937 g_mt(0);
 
 uint8 cardNum(card_t c) { return c&NUM_MASK; }
 uint8 cardCol(card_t c) { return c&COL_MASK; }
-uint8 cardColIX(card_t c) { return c>>4; }
+uint8 cardColIX(card_t c) { return c>>NUM_BITS; }
 bool isSameBlackRed(card_t c1, card_t c2)	//	c1, c2 が黒どうし or 赤どうしか？
 {
 	return ((c1 ^ c2) & BR_MASK) == 0;
@@ -113,13 +113,31 @@ void Board::init()		//	初期化・カードを配る
 		m_column[i%N_COLUMN].push_back(deck[i]);	//	デックのカードを順に m_column[] に格納
 	}
 }
+void Board::initNoShuffle()		//	初期化・カードを配る
+{
+	m_nFreeCell = 0;		//	フリーセルのカード数
+	for(auto& x: m_freeCell) x = 0;
+	for(auto& x: m_home) x = 0;
+	for(auto& x: m_column) x.clear();
+	vector<card_t> deck;
+	card_t col = 0;
+	for (int c = 0; c != N_COL; ++c, col+=0x10) {
+		for (int n = N_NUM; n >= 1; --n) {
+			deck.push_back(col+n);		//	52枚のカードをいったんデックに入れる
+		}
+	}
+	//shuffle(deck.begin(), deck.end(), g_mt);		//	デックをシャフル
+	for (int i = 0; i !=deck.size(); ++i) {
+		m_column[i%N_COLUMN].push_back(deck[i]);	//	デックのカードを順に m_column[] に格納
+	}
+}
 std::string Board::text() const
 {
 	string txt;
 	txt += "A: ";
 	//for(auto x: m_home) txt += to_card_string(x);
 	for (int i = 0; i < N_COL; ++i) {
-		txt += to_card_string(m_home[i] + (i<<4));
+		txt += to_card_string(m_home[i] + (i<<NUM_BITS));
 	}
 	txt += "\n";
 	txt += "F: ";
@@ -283,7 +301,37 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 			}
 		}
 	}
-	
+}
+bool Board::isSafeToHome(card_t cd) const		//	カードを安全にホーム移動できるか？
+{
+	int num = (int)cardNum(cd);
+	auto ix = cardColIX(cd);
+	if( m_home[ix] != num - 1 )
+		return false;
+	num -= 2;
+	//auto col = cardCol(cd);
+	switch( ix ) {
+	case IX_SPADE:
+	case IX_CLUB:
+		return m_home[IX_HEART] >= num && m_home[IX_DIAMOND] >= num;
+	case IX_HEART:
+	case IX_DIAMOND:
+		return m_home[IX_SPADE] >= num && m_home[IX_CLUB] >= num;
+	}
+	assert(0);
+	return false;
+}
+bool Board::genSafeMove(Move& mv) const				//	安全にホーム移動できる着手生成
+{
+	for (int s = 0; s != N_COLUMN; ++s) {
+		if( m_column[s].empty() ) continue;
+		auto cd = m_column[s].back();
+		if( isSafeToHome(cd) ) {
+			mv = Move('0'+s, 'A'+cardColIX(cd));
+			return true;
+		}
+	}
+	return false;
 }
 void Board::doMove(const Move& mv)
 {
@@ -346,7 +394,7 @@ void Board::unMove(const Move& mv)
 		m_nFreeCell -= 1;
 	} else if( mv.m_dst <= 'D' ) {		//	ゴールへの移動
 		int ix = mv.m_dst - 'A';
-		cd = (ix << 4) + m_home[ix];
+		cd = (ix << NUM_BITS) + m_home[ix];
 		m_home[ix] -= 1;
 	}
 	if( isdigit(mv.m_src) ) {		//	列からの移動
