@@ -62,10 +62,12 @@ public:
 	std::string	hkeyText() const;			//	ハッシュキーテキスト
 	std::string	hkeyHex() const;			//	ハッシュキー１６進数テキスト
 	bool	checkNCard() const;				//	カード数チェック
+	int	nCardHome() const;
 	int	nCardFreeCell() const { return m_nCardFreeCell; }
 	int	nEmptyColumns() const;			//	空欄カラム数を返す
 	int	nMobableDesc() const;			//	移動可能降順列数を返す
 	int	nMobableDescToEmpty() const;	//	空列への移動可能降順列数を返す
+	int	eval() const;							//	評価値を返す
 	void	genMoves(Moves&) const;		//	可能着手生成
 	bool	genSafeMove(Move&) const;		//	安全にホーム移動できる着手生成
 	bool	isSafeToHome(card_t) const;		//	カードを安全にホーム移動できるか？

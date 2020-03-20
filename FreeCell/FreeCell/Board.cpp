@@ -207,6 +207,10 @@ void Board::set(const std::string& txt)
 		++ix;
 	}
 }
+int Board::nCardHome() const
+{
+	return m_home[0] + m_home[1] + m_home[2] + m_home[3];
+}
 int Board::nEmptyColumns() const			//	空欄カラム数を返す
 {
 	int n = 0;
@@ -236,6 +240,21 @@ bool Board::checkNCard() const				//	カード数チェック
 	for(auto c: m_home) n += c;
 	for(const auto& lst: m_column) n += lst.size();
 	return n == N_CARD;
+}
+//	評価値を返す
+//		移動可能数*10000 + ホーム枚数*100 + 列末尾降順列枚数
+int Board::eval() const
+{
+	int ev = nMobableDesc() * 10000 + nCardHome() * 100;
+	for(const auto& lst: m_column) {
+		if( lst.empty() ) continue;
+		for (int i = lst.size() - 1; --i >= 0; ) {
+			if( !canPushBack(lst[i], lst[i+1]) )
+				break;
+			ev += 1;
+		}
+	}
+	return ev;
 }
 void Board::genMoves(Moves& mvs) const		//	可能着手生成
 {

@@ -10,11 +10,20 @@ using namespace std;
 //unordered_map<string, int> g_map;
 unordered_map<string, Move> g_map;
 
-void searchMovable6();		//	初期状態から降順列６枚以上移動可能状態を探す
+void searchMovable6(Board& bd);		//	初期状態から降順列６枚以上移動可能状態を探す
+bool searchHomePlusMovable6(Board& bd);		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
+bool search(Board& bd);		//	現状態から、評価値が増加する状態を探す
 
 int main()
 {
-	searchMovable6();		//	初期状態から降順列６枚以上移動可能状態を探す
+	Board bd;
+	searchMovable6(bd);		//	初期状態から降順列６枚以上移動可能状態を探す
+	while( bd.nCardHome() < 52 ) {
+		//if( !searchHomePlusMovable6(bd) )		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
+		if( !search(bd) )		//	現状態から、評価値が増加する状態を探す
+			break;
+		cout << "eval = " << bd.eval() << "\n";
+	}
 	//
 #if	0
 	//cout << "♠♣♥◆\n";
@@ -296,9 +305,10 @@ int main()
 	//
     std::cout << "OK\n";
 }
-void searchMovable6()		//	初期状態から降順列６枚以上移動可能状態を探す
+void searchMovable6(Board& bd)		//	初期状態から降順列６枚以上移動可能状態を探す
 {
-	Board bd;
+	//Board bd;
+	bd.init();
 	auto start = std::chrono::system_clock::now();
 	auto hktxt = bd.hkeyText();
 	int mxnm = 0;		//	最大移動可能降順列数
@@ -366,4 +376,170 @@ void searchMovable6()		//	初期状態から降順列６枚以上移動可能状
 	cout << "Moves: ";
 	for(const auto& mv: mvs) cout << mv.text() << " ";
 	cout << "\n\n";
+}
+//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
+bool searchHomePlusMovable6(Board& bd)
+{
+	const int N_MOVABLE = 6;
+	const int nCardHome0 = bd.nCardHome();		//	現ホームカード枚数
+	auto start = std::chrono::system_clock::now();
+	auto hktxt = bd.hkeyText();
+	bool found = false;
+	string hkey;
+	//int mxnm = 0;		//	最大移動可能降順列数
+	//string mxnmhk;		//	最大移動可能降順列数を与える局面ハッシュテキスト
+	g_map.clear();
+	g_map[hktxt] = Move(0,0);
+	vector<string> lst, lst2;
+	lst.push_back(hktxt);
+	for (int n = 1; n <= 10; ++n) {		//	手数
+		lst2.clear();	//	末端ノード
+		for(const auto& txt: lst) {
+			bd.set(txt);
+			assert(bd.checkNCard());
+			Moves lst;
+			bd.genMoves(lst);
+			for(const auto& mv: lst) {
+				bd.doMove(mv);
+				if( !bd.checkNCard() )
+					cout << bd.text() << "\n";
+				assert( bd.checkNCard() );
+				auto hk = bd.hkeyText();
+				if( g_map.find(hk) == g_map.end() ) {
+					auto nm = bd.nMobableDesc();
+					if( nm >= N_MOVABLE && bd.nCardHome() > nCardHome0 ) {
+						found = true;
+						hkey = bd.hkeyText();
+					}
+#if	0
+					if( nm > mxnm ) {
+						mxnmhk = bd.hkeyText();
+						mxnm = nm;
+						if( mxnm > 5 )
+							cout << "nm = " << mxnm << "\n" << bd.text() << "\n";
+					}
+#endif
+					g_map[hk] = mv;
+					lst2.push_back(hk);
+				}
+				bd.unMove(mv);
+				assert( bd.checkNCard() );
+				if( found ) break;
+			}
+		}
+		lst.swap(lst2);		//	末端ノードリストを lst に転送
+		cout << n << ": lst.size() = " << lst.size() << "\n";
+		if( found ) break;
+	}
+	auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+    auto dur = end - start;        // 要した時間を計算
+    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+    cout << "dur: " << msec << "msec\n";
+    if( !found ) return false;
+    //	手順表示
+    //string hk = mxnmhk;
+	bd.set(hkey);
+	Moves mvs;
+    for (;;) {
+    	Move mv = g_map[hkey];
+	    if( mv == Move(0,0) ) break;
+	    mvs.insert(mvs.begin(), mv);		//	手数は少ないのでおｋ
+	    bd.unMove(mv);
+		hkey = bd.hkeyText();
+    }
+	cout << bd.text() << "\n";
+	int cnt = 0;
+    for(const auto& mv: mvs) {
+	    cout << "#" << ++cnt << " Move: " << mv.text() << "\n";
+	    bd.doMove(mv);
+		cout << bd.text() << "\n";
+    }
+#if	0
+	cout << "hkey = " << bd.hkeyHex() << "\n";
+	bd.genMoves(mvs);
+	cout << "Moves: ";
+	for(const auto& mv: mvs) cout << mv.text() << " ";
+	cout << "\n\n";
+#endif
+	return true;
+}
+//	現状態から、評価値が増加する状態を探す
+bool search(Board& bd)
+{
+	//const int N_MOVABLE = 6;
+	//const int nCardHome0 = bd.nCardHome();		//	現ホームカード枚数
+	//const int ev0 = bd.eval();
+	auto start = std::chrono::system_clock::now();
+	auto hktxt = bd.hkeyText();
+	bool found = false;
+	string hkey;
+	int mxev = 0;		//	最大評価値
+	string mxhk;		//	最大評価値を与える局面ハッシュテキスト
+	g_map.clear();
+	g_map[hktxt] = Move(0,0);
+	vector<string> lst, lst2;
+	lst.push_back(hktxt);
+	for (int n = 1; n <= 8; ++n) {		//	最大８手探索
+		lst2.clear();	//	末端ノード
+		for(const auto& txt: lst) {
+			bd.set(txt);
+			assert(bd.checkNCard());
+			Moves lst;
+			bd.genMoves(lst);
+			for(const auto& mv: lst) {
+				bd.doMove(mv);
+				if( !bd.checkNCard() )
+					cout << bd.text() << "\n";
+				assert( bd.checkNCard() );
+				auto hk = bd.hkeyText();
+				if( g_map.find(hk) == g_map.end() ) {
+					auto ev = bd.eval();
+					if( ev > mxev ) {
+						mxhk = bd.hkeyText();
+						mxev = ev;
+					}
+					g_map[hk] = mv;
+					lst2.push_back(hk);
+				}
+				bd.unMove(mv);
+				assert( bd.checkNCard() );
+				//if( found ) break;
+			}
+		}
+		lst.swap(lst2);		//	末端ノードリストを lst に転送
+		cout << n << ": lst.size() = " << lst.size() << "\n";
+		//if( found ) break;
+		if( lst.size() >= 1024*1024 ) break;		//	末端ノード数が１Mを超えた場合は探索終了
+	}
+	auto end = std::chrono::system_clock::now();       // 計測終了時刻を保存
+    auto dur = end - start;        // 要した時間を計算
+    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+    cout << "dur: " << msec << "msec\n";
+    //if( !found ) return false;
+    //	手順表示
+    hkey = mxhk;
+	bd.set(mxhk);
+	Moves mvs;
+    for (;;) {
+    	Move mv = g_map[hkey];
+	    if( mv == Move(0,0) ) break;
+	    mvs.insert(mvs.begin(), mv);		//	手数は少ないのでおｋ
+	    bd.unMove(mv);
+		hkey = bd.hkeyText();
+    }
+	cout << bd.text() << "\n";
+	int cnt = 0;
+    for(const auto& mv: mvs) {
+	    cout << "#" << ++cnt << " Move: " << mv.text() << "\n";
+	    bd.doMove(mv);
+		cout << bd.text() << "\n";
+    }
+#if	0
+	cout << "hkey = " << bd.hkeyHex() << "\n";
+	bd.genMoves(mvs);
+	cout << "Moves: ";
+	for(const auto& mv: mvs) cout << mv.text() << " ";
+	cout << "\n\n";
+#endif
+	return true;
 }
