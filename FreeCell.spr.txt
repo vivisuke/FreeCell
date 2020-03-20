@@ -40,7 +40,7 @@
 ◎ C 03/20 03/20 0.001 ToDo Board::genMoves()：列→列の複数枚数移動手生成
 ● C 03/20             ToDo Board::doMove(mv)：列→列の複数枚数移動対応
 ● C 03/20             ToDo Board::unMove(mv)：列→列の複数枚数移動対応
-● C 03/20             ToDo 
+◎ C 03/20 03/20 0.001 問題 Board::genMoves()：空列への移動手が生成されない
 ● C 03/20             ToDo 
 ● C 03/20             ToDo 
 ● C 03/20             ToDo 

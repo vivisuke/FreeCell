@@ -218,6 +218,7 @@ bool Board::checkNCard() const				//	カード数チェック
 void Board::genMoves(Moves& mvs) const		//	可能着手生成
 {
 	mvs.clear();
+	//	列からの移動
 	for (int s = 0; s != N_COLUMN; ++s) {
 		if( !m_column[s].empty() ) {				//	列[i] が空でない場合
 			if( m_nFreeCell != N_FREECELL ) {
@@ -226,8 +227,12 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 			card_t sc = m_column[s].back();		//	末尾カード
 			//	別の列末尾への移動
 			for (int d = 0; d != N_COLUMN; ++d) {
-				if( s != d && !m_column[d].empty() && canPushBack(m_column[d].back(), sc) )
-					mvs.emplace_back('0'+s, '0'+d);			//	i から d への移動
+				if( s != d ) {
+					if( m_column[d].empty() ) {
+						mvs.emplace_back('0'+s, '0'+d);			//	i から d への移動
+					} else if( canPushBack(m_column[d].back(), sc) )
+						mvs.emplace_back('0'+s, '0'+d);			//	i から d への移動
+				}
 			}
 			//	ゴールへの移動
 			auto gi = cardColIX(sc);
@@ -240,7 +245,9 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 		card_t sc = m_freeCell[s];
 		//	別の列末尾への移動
 		for (int d = 0; d != N_COLUMN; ++d) {
-			if( !m_column[d].empty() && canPushBack(m_column[d].back(), sc) )
+			if( m_column[d].empty() ) {
+				mvs.emplace_back('F'+s, '0'+d);			//	i から d への移動
+			} else if( canPushBack(m_column[d].back(), sc) )
 				mvs.emplace_back('F'+s, '0'+d);			//	i から d への移動
 		}
 		//	ゴールへの移動
@@ -248,7 +255,7 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 		if( m_home[gi] == cardNum(sc) - 1 )
 			mvs.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
 	}
-	//	列→列 降順列移動
+	//	列→列 降順列移動（空列への移動は生成しない）
 	const int mxnm = nMobableDesc();
 	for (int s = 0; s != N_COLUMN; ++s) {
 		const auto& lst = m_column[s];
