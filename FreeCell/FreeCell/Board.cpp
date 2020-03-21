@@ -248,11 +248,11 @@ int Board::eval() const
 	int ev = nMobableDesc() * 10000 + nCardHome() * 100;
 	for(const auto& lst: m_column) {
 		if( lst.empty() ) continue;
-		for (int i = lst.size() - 1; --i >= 0; ) {
-			if( !canPushBack(lst[i], lst[i+1]) )
-				break;
-			ev += 1;
-		}
+		int i = lst.size();
+		while ( i != 0 && canPushBack(lst[i-1], lst[i]) ) --i;
+		int n = lst.size() - i;
+		if( i == 0 ) n = n*2;
+		ev += n;
 	}
 	return ev;
 }
@@ -363,8 +363,8 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 		if( genSafeMove(mv) )
 			mvs.push_back(mv);
 		else {
-			cout << text() << "\n";
-			assert(0);
+			//cout << text() << "\n";
+			//assert(0);
 		}
 	}
 }
