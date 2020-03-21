@@ -296,7 +296,7 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 		if( m_home[gi] == cardNum(sc) - 1 )
 			mvs.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
 	}
-	//	列→列 降順列移動、空列への移動も生成
+	//	列→列 降順列移動、空列への移動も生成（ただし、列全体の空列移動は不可）
 	const int mxnm = nMobableDesc();
 	const int mxnm2 = nMobableDescToEmpty();		//	空列への移動可能枚数
 	for (int s = 0; s != N_COLUMN; ++s) {
@@ -309,9 +309,10 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 				auto top = lst[SZ-n];
 				for (int d = 0; d != N_COLUMN; ++d) {
 					if( d == s ) continue;
-					if( m_column[d].empty() ) {
-						int n2 = min(n, mxnm2);		//	移動可能枚数
-						mvs.emplace_back('0'+s, '0'+d, (char)n2);
+					if( m_column[d].empty() ) {		//	空列への移動
+						int n2 = min(n, mxnm2);	//	移動可能枚数
+						if( n2 < lst.size() )				//	列全体を空列に移動するのは不可
+							mvs.emplace_back('0'+s, '0'+d, (char)n2);
 					} else {
 						if( canPushBack(m_column[d].back(), top) )
 							mvs.emplace_back('0'+s, '0'+d, (char)n);
