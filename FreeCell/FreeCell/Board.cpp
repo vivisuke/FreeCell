@@ -269,7 +269,7 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 				const int SZ = lst.size();
 				int n = 1;		//	降順列枚数
 				while( SZ-n-1 >= 0 && n < mxnm2 && canPushBack(lst[SZ-n-1], lst[SZ-n]) ) ++n;
-				if( n > 1 ) {
+				//if( n > 1 ) {
 					auto top = lst[SZ-n];
 					for (int d = 0; d != N_COLUMN; ++d) {
 						if( d == s ) continue;
@@ -280,7 +280,7 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 						} else {
 						}
 					}
-				}
+				//}
 			}
 		}
 		if( mvs.empty() ) {
@@ -356,6 +356,14 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 					}
 				}
 			}
+		}
+	}
+	if( mvs.empty() ) {
+		Move mv;
+		if( genSafeMove(mv) )
+			mvs.push_back(mv);
+		else {
+			assert(0);
 		}
 	}
 }
