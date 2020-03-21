@@ -10,14 +10,47 @@ using namespace std;
 //unordered_map<string, int> g_map;
 unordered_map<string, Move> g_map;
 
+void test_120811();
 void searchMovable6(Board& bd);		//	初期状態から降順列６枚以上移動可能状態を探す
 bool searchHomePlusMovable6(Board& bd);		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
-bool search(Board& bd);		//	現状態から、評価値が増加する状態を探す
+bool search(Board& bd, vector<string>& hist);		//	現状態から、評価値が増加する状態を探す
 
 int main()
 {
+	//test_120811();
+	//
+#if	0
 	Board bd;
+	string hk0 = {0x00,0x00,0x00,0x00,0x07,0x06,0x06,0x07,0x29,0x08,0x00,0x1d,0x3c,0x0b,0x2a,0x19,0x28,0x17,0x00,0x3d,
+						0x1c,0x3b,0x0a,0x39,0x18,0x27,0x00,0x00,0x0d,0x2c,0x1b,0x3a,0x09,0x38,0x00,0x00,0x2d,0x0c,0x2b,0x00,0x1a,0x00};
+	bd.set(hk0);
+	cout << bd.text() << "\n";
+	Moves mvs;
+	bd.genMoves(mvs);
+	cout << "Moves: ";
+	for(const auto& mv: mvs) cout << mv.text() << " ";
+	cout << "\n\n";
+#endif
+	//
+#if	0
+	Board bd;
+	string hk0 = {0x25,0x00,0x00,0x00,0x01,0x01,0x01,0x05,0x0c,0x08,0x3c,0x17,0x06,0x05,0x27,0x00,0x0b,0x2d,0x22,0x04,
+						 0x02,0x36,0x2a,0x19,0x28,0x00,0x00,0x07,0x1d,0x37,0x14,0x13,0x29,0x00,0x0d,0x2c,0x1b,0x3a,0x09,0x38,
+						 0x00,0x00,0x23,0x24,0x2b,0x26,0x03,0x00,0x1a,0x16,0x15,0x18,0x12,0x3d,0x1c,0x3b,0x0a,0x39,0x00,};
+	bd.set(hk0);
+	cout << bd.text() << "\n";
+	Moves mvs;
+	bd.genMoves(mvs);
+	cout << "Moves: ";
+	for(const auto& mv: mvs) cout << mv.text() << " ";
+	cout << "\n\n";
+#endif
+	//
+#if	1
+	Board bd;
+	vector<string> hist;		//	中間目標リスト
 	searchMovable6(bd);		//	初期状態から降順列６枚以上移動可能状態を探す
+	hist.push_back(bd.hkeyText());
 	while( bd.nCardHome() < 52 ) {
 		//if( !searchHomePlusMovable6(bd) )		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
 		Move mv;
@@ -27,10 +60,11 @@ int main()
 			cout << bd.text() << "\n";
 			cout << "eval = " << bd.eval() << "\n";
 		}
-		if( !search(bd) )		//	現状態から、評価値が増加する状態を探す
+		if( !search(bd, hist) )		//	現状態から、評価値が増加する状態を探す
 			break;
 		cout << "eval = " << bd.eval() << "\n";
 	}
+#endif
 	//
 #if	0
 	//cout << "♠♣♥◆\n";
@@ -471,12 +505,12 @@ bool searchHomePlusMovable6(Board& bd)
 	return true;
 }
 //	現状態から、評価値が増加する状態を探す
-bool search(Board& bd)
+bool search(Board& bd, vector<string>& hist)
 {
 	if( bd.nCardHome() >= 52) return false;
 	//const int N_MOVABLE = 6;
 	//const int nCardHome0 = bd.nCardHome();		//	現ホームカード枚数
-	//const int ev0 = bd.eval();
+	const int ev0 = bd.eval();
 	auto start = std::chrono::system_clock::now();
 	auto hktxt = bd.hkeyText();
 	bool found = false;
@@ -503,9 +537,15 @@ bool search(Board& bd)
 				auto hk = bd.hkeyText();
 				if( g_map.find(hk) == g_map.end() ) {
 					auto ev = bd.eval();
-					if( ev > mxev ) {
-						mxhk = bd.hkeyText();
-						mxev = ev;
+					if( ev > mxev && ev != ev0 ) {
+						auto hk = bd.hkeyText();
+						//if( hk != hist.back() )
+						if( std::find(hist.begin(), hist.end(), hk) == hist.end() )
+						{		//	ループ禁止
+							//mxhk = bd.hkeyText();
+							mxhk = hk;
+							mxev = ev;
+						}
 					}
 					g_map[hk] = mv;
 					lst2.push_back(hk);
@@ -551,5 +591,27 @@ bool search(Board& bd)
 	for(const auto& mv: mvs) cout << mv.text() << " ";
 	cout << "\n\n";
 #endif
+	//
+	//cout << "hkey = " << bd.hkeyHex() << "\n";
+	hist.push_back(bd.hkeyText());
+	//
 	return true;
+}
+void test_120811()
+{
+	Board bd;
+	string hk0 = {0x25,0x00,0x00,0x00,0x01,0x01,0x01,0x05,0x0c,0x08,0x3c,0x17,0x06,0x05,0x27,0x00,0x0b,0x2d,0x22,0x04,
+						 0x02,0x36,0x2a,0x19,0x28,0x00,0x00,0x07,0x1d,0x37,0x14,0x13,0x29,0x00,0x0d,0x2c,0x1b,0x3a,0x09,0x38,
+						 0x00,0x00,0x23,0x24,0x2b,0x26,0x03,0x00,0x1a,0x16,0x15,0x18,0x12,0x3d,0x1c,0x3b,0x0a,0x39,0x00,};
+	bd.set(hk0);
+	cout << bd.text() << "\n";
+	cout << "eval = " << bd.eval() << "\n\n";
+	vector<string> hist;		//	中間目標リスト
+	hist.push_back(hk0);
+	for (int i = 0; i < 10; ++i) {
+		//cout << "i = " << i << "\n";
+		//cout << bd.hkeyHex() << "\n";
+		search(bd, hist);
+		cout << "eval = " << bd.eval() << "\n\n";
+	}
 }
