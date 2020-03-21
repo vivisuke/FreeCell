@@ -363,6 +363,7 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 		if( genSafeMove(mv) )
 			mvs.push_back(mv);
 		else {
+			cout << text() << "\n";
 			assert(0);
 		}
 	}
@@ -393,6 +394,13 @@ bool Board::genSafeMove(Move& mv) const				//	安全にホーム移動できる�
 		auto cd = m_column[s].back();
 		if( isSafeToHome(cd) ) {
 			mv = Move('0'+s, 'A'+cardColIX(cd));
+			return true;
+		}
+	}
+	for (int s = 0; m_freeCell[s] != 0; ++s) {
+		auto cd = m_freeCell[s];
+		if( isSafeToHome(cd) ) {
+			mv = Move('F'+s, 'A'+cardColIX(cd));
 			return true;
 		}
 	}
