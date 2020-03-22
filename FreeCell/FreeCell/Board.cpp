@@ -256,41 +256,10 @@ int Board::eval() const
 	}
 	return ev;
 }
-void Board::genMoves(Moves& mvs) const		//	可能着手生成
+void Board::genMoves1(Moves& mvs /*, bool bTrue*/) const		//	１枚のみ移動する可能着手生成
 {
-	mvs.clear();
-#if	1
-	//	空列が２つ以上ある場合は、降順列を空列に移動する手のみ生成
-	if( nEmptyColumns() >= 2 ) {
-		const int mxnm2 = nMobableDescToEmpty();		//	空列への移動可能枚数
-		for (int s = 0; s != N_COLUMN; ++s) {
-			const auto& lst = m_column[s];
-			if( lst.size() > 1 ) {
-				const int SZ = lst.size();
-				int n = 1;		//	降順列枚数
-				while( SZ-n-1 >= 0 && n < mxnm2 && canPushBack(lst[SZ-n-1], lst[SZ-n]) ) ++n;
-				//if( n > 1 ) {
-					auto top = lst[SZ-n];
-					for (int d = 0; d != N_COLUMN; ++d) {
-						if( d == s ) continue;
-						if( m_column[d].empty() ) {		//	空列への移動
-							int n2 = min(n, mxnm2);	//	移動可能枚数
-							if( n2 < lst.size() )				//	列全体を空列に移動するのは不可
-								mvs.emplace_back('0'+s, '0'+d, (char)n2);
-						} else {
-						}
-					}
-				//}
-			}
-		}
-		if( mvs.empty() ) {
-			Move mv;
-			if( genSafeMove(mv) )
-				mvs.push_back(mv);
-		}
-		return;
-	}
-#endif
+	//if( bTrue )
+		mvs.clear();
 	//	列の末尾１枚の移動
 	for (int s = 0; s != N_COLUMN; ++s) {
 		if( !m_column[s].empty() ) {				//	列[i] が空でない場合
@@ -328,6 +297,44 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 		if( m_home[gi] == cardNum(sc) - 1 )
 			mvs.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
 	}
+}
+void Board::genMoves(Moves& mvs) const		//	可能着手生成
+{
+	//mvs.clear();
+#if	1
+	//	空列が２つ以上ある場合は、降順列を空列に移動する手のみ生成
+	if( nEmptyColumns() >= 2 ) {
+		mvs.clear();
+		const int mxnm2 = nMobableDescToEmpty();		//	空列への移動可能枚数
+		for (int s = 0; s != N_COLUMN; ++s) {
+			const auto& lst = m_column[s];
+			if( lst.size() > 1 ) {
+				const int SZ = lst.size();
+				int n = 1;		//	降順列枚数
+				while( SZ-n-1 >= 0 && n < mxnm2 && canPushBack(lst[SZ-n-1], lst[SZ-n]) ) ++n;
+				//if( n > 1 ) {
+					auto top = lst[SZ-n];
+					for (int d = 0; d != N_COLUMN; ++d) {
+						if( d == s ) continue;
+						if( m_column[d].empty() ) {		//	空列への移動
+							int n2 = min(n, mxnm2);	//	移動可能枚数
+							if( n2 < lst.size() )				//	列全体を空列に移動するのは不可
+								mvs.emplace_back('0'+s, '0'+d, (char)n2);
+						} else {
+						}
+					}
+				//}
+			}
+		}
+		if( mvs.empty() ) {
+			Move mv;
+			if( genSafeMove(mv) )
+				mvs.push_back(mv);
+		}
+		return;
+	}
+#endif
+	genMoves1(mvs);
 	//	列→列 降順列移動、最初の空列への移動も生成
 	//		列全体の空列移動は不可
 	//		列の最初のKからの降順列は移動不可

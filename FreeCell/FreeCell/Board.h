@@ -69,6 +69,7 @@ public:
 	int	nMobableDescToEmpty() const;	//	空列への移動可能降順列数を返す
 	int	eval() const;							//	評価値を返す
 	void	genMoves(Moves&) const;		//	可能着手生成
+	void	genMoves1(Moves& /*, bool=true*/) const;		//	１枚のみ移動する可能着手生成
 	bool	genSafeMove(Move&) const;		//	安全にホーム移動できる着手生成
 	bool	isSafeToHome(card_t) const;		//	カードを安全にホーム移動できるか？
 public:
