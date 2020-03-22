@@ -6,5 +6,5 @@ random_device g_rd;
 #if	1
 mt19937 g_mt(g_rd());
 #else
-mt19937 g_mt(0);
+mt19937 g_mt(3);
 #endif

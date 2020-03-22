@@ -278,8 +278,10 @@ void Board::genMoves1(Moves& mvs /*, bool bTrue*/) const		//	１枚のみ移動�
 			}
 			//	ゴールへの移動
 			auto gi = cardColIX(sc);
-			if( m_home[gi] == cardNum(sc) - 1 )
-				mvs.emplace_back('0'+s, 'A'+gi);			//	ゴールへの移動
+			if( m_home[gi] == cardNum(sc) - 1 ) {
+				if( isSafeToHome(sc) )
+					mvs.emplace_back('0'+s, 'A'+gi);			//	ゴールへの移動
+			}
 		}
 	}
 	//	フリーセルから列・ゴールへの移動
@@ -294,8 +296,10 @@ void Board::genMoves1(Moves& mvs /*, bool bTrue*/) const		//	１枚のみ移動�
 		}
 		//	ゴールへの移動
 		auto gi = cardColIX(sc);
-		if( m_home[gi] == cardNum(sc) - 1 )
-			mvs.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
+		if( m_home[gi] == cardNum(sc) - 1 ) {
+			if( isSafeToHome(sc) )
+				mvs.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
+		}
 	}
 }
 void Board::genMoves(Moves& mvs) const		//	可能着手生成
