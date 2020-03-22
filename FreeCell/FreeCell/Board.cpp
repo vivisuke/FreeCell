@@ -245,7 +245,7 @@ bool Board::checkNCard() const				//	カード数チェック
 //		移動可能数*10000 + ホーム枚数*100 + 列末尾降順列枚数
 int Board::eval() const
 {
-	int ev = nMobableDesc() * 10000 + nCardHome() * 100;
+	int ev = min(6, nMobableDesc()) * 10000 + nCardHome() * 100;
 	for(const auto& lst: m_column) {
 		if( lst.empty() ) continue;
 		int i = lst.size();
