@@ -10,6 +10,7 @@ using namespace std;
 //unordered_map<string, int> g_map;
 unordered_map<string, Move> g_map;
 
+void	test_genMove();			//	移動手生成
 void	test_genMove1();		//	１枚移動手のみ生成
 void test_120811();
 void test_search();
@@ -20,9 +21,10 @@ bool search(Board& bd, vector<string>& hist);		//	現状態から、評価値が
 int main()
 {
 	//cout << "♠♣♥◆\n";
-	test_genMove1();
+	//test_genMove();
+	//test_genMove1();
 	//test_120811();
-	//test_search();
+	test_search();
 	//
 #if	0
 	if (true) {
@@ -635,7 +637,9 @@ void test_search()
 	vector<string> hist;		//	中間目標リスト
 	searchMovable6(bd);		//	初期状態から降順列６枚以上移動可能状態を探す
 	hist.push_back(bd.hkeyText());
-	while( bd.nCardHome() < 52 ) {
+	int cnt = 0;
+	while( bd.nCardHome() < 52 && ++cnt < 500 ) {
+		cout << "cnt = " << cnt << "\n";
 		//if( !searchHomePlusMovable6(bd) )		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
 		Move mv;
 		while( bd.genSafeMove(mv) ) {
@@ -648,6 +652,22 @@ void test_search()
 		if( !search(bd, hist) )		//	現状態から、評価値が増加する状態を探す
 			break;
 		cout << "eval = " << bd.eval() << "\n";
+	}
+}
+void	test_genMove()
+{
+	if (true) {
+		Board bd;
+		string hk0 = { 0x03,0x14,0x00,0x00,0x00,0x02,0x06,0x02,0x2b,0x3d,0x1d,0x01,0x2a,0x15,0x28,0x17,0x36,0x05,0x00,0x27,
+							0x13,0x34,0x19,0x16,0x0c,0x00,0x00,0x0a,0x29,0x08,0x37,0x06,0x35,0x04,0x33,0x02,0x00,0x00,0x3c,0x0b,
+							0x00,0x2d,0x1c,0x3b,0x1a,0x39,0x18,0x00,0x0d,0x2c,0x1b,0x3a,0x09,0x38,0x07,0x00, };
+		bd.set(hk0);
+		cout << bd.text() << "\n";
+		Moves mvs;
+		bd.genMoves(mvs);
+		cout << "Moves: ";
+		for (const auto& mv : mvs) cout << mv.text() << " ";
+		cout << "\n\n";
 	}
 }
 //	１枚移動手のみ生成

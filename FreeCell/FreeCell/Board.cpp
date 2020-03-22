@@ -303,11 +303,30 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 	//mvs.clear();
 #if	1
 	//	空列が２つ以上ある場合は、降順列を空列に移動する手のみ生成
+	//		列がひとつの降順列の場合は、その途中を空列に移動不可
 	if( nEmptyColumns() >= 2 ) {
 		mvs.clear();
 		const int mxnm2 = nMobableDescToEmpty();		//	空列への移動可能枚数
 		for (int s = 0; s != N_COLUMN; ++s) {
 			const auto& lst = m_column[s];
+			//
+#if	1
+			if( lst.empty() ) continue;
+			int i = lst.size() - 1;
+			while( i != 0 && canPushBack(lst[i-1], lst[i]) ) {
+				--i;
+			}
+			if( i == 0 ) continue;		//	列が降順列だけの場合
+			int n = std::min((int)lst.size() - i, mxnm2);		//	降順列移動枚数
+			auto top = lst[lst.size()-n];
+			for (int d = 0; d != N_COLUMN; ++d) {
+				//if( d == s ) continue;
+				if( m_column[d].empty() ) {		//	空列への移動
+					mvs.emplace_back('0'+s, '0'+d, (char)n);
+					break;		//	最初の空列への移動のみ生成
+				}
+			}
+#else
 			if( lst.size() > 1 ) {
 				const int SZ = lst.size();
 				int n = 1;		//	降順列枚数
@@ -325,6 +344,7 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 					}
 				//}
 			}
+#endif
 		}
 		if( mvs.empty() ) {
 			Move mv;
@@ -338,6 +358,7 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 	//	列→列 降順列移動、最初の空列への移動も生成
 	//		列全体の空列移動は不可
 	//		列の最初のKからの降順列は移動不可
+	//		~~列がひとつの降順列の場合は、その途中を空列に移動不可~~
 	const int mxnm = nMobableDesc();
 	const int mxnm2 = nMobableDescToEmpty();		//	空列への移動可能枚数
 	for (int s = 0; s != N_COLUMN; ++s) {
