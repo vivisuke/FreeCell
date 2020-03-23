@@ -13,6 +13,7 @@ unordered_map<string, Move> g_map;
 
 void	test_genMove();			//	移動手生成
 void	test_genMove1();		//	１枚移動手のみ生成
+void	test_eval();
 void test_120811();
 void test_search();
 void searchMovable6(Board& bd);		//	初期状態から降順列６枚以上移動可能状態を探す
@@ -22,6 +23,7 @@ bool do_search(Board& bd, vector<string>& hist);		//	現状態から、評価値
 int main()
 {
 	//cout << "♠♣♥◆\n";
+	//test_eval();
 	//test_genMove();
 	//test_genMove1();
 	//test_120811();
@@ -543,9 +545,11 @@ bool do_search(Board& bd, vector<string>& hist)
 		for(const auto& txt: lst) {
 			bd.set(txt);
 			assert(bd.checkNCard());
+#if	0
 			Move mv;
 			while( bd.genSafeMove(mv) )
 				bd.doMove(mv);
+#endif
 			Moves mvs;
 			bd.genMoves(mvs);
 			if( lst.empty() ) continue;
@@ -637,7 +641,8 @@ void test_120811()
 }
 void test_search()
 {
-	g_mt = mt19937{0};		//	乱数シード指定
+	auto seed = g_rd();
+	g_mt = mt19937{7};		//	乱数シード指定
 	Board bd;
 	vector<string> hist;		//	中間目標リスト
 	searchMovable6(bd);		//	初期状態から降順列６枚以上移動可能状態を探す
@@ -658,6 +663,7 @@ void test_search()
 			break;
 		cout << "eval = " << bd.eval() << "\n";
 	}
+	cout << "seed = " << seed << "\n";
 }
 void	test_genMove()
 {
@@ -724,5 +730,17 @@ void	test_genMove1()
 		cout << "Moves: ";
 		for (const auto& mv : mvs) cout << mv.text() << " ";
 		cout << "\n\n";
+	}
+}
+void test_eval()
+{
+	if (true) {
+		Board bd;
+		string hk0 = {0x1d,0x3a,0x00,0x00,0x09,0x09,0x07,0x09,0x0d,0x3c,0x1b,0x2a,0x00,0x2d,0x00,0x0c,0x2b,0x1a,0x00,0x00,
+							0x3d,0x1c,0x3b,0x0a,0x29,0x00,0x0b,0x00,0x00,0x28,0x2c,0x00,};		//	乱数シード１で不正になる局面
+		bd.set(hk0);
+		cout << bd.text() << "\n";
+		cout << "eval = " << bd.eval() << "\n";
+		cout << "\n";
 	}
 }

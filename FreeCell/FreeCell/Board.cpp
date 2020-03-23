@@ -243,6 +243,7 @@ bool Board::checkNCard() const				//	カード数チェック
 }
 //	評価値を返す
 //		移動可能数*10000 + ホーム枚数*100 + 列末尾降順列枚数
+//		末尾順列以前にカードがある場合は、末尾までの枚数を評価値からマイナスする
 int Board::eval() const
 {
 	int ev = min(6, nMobableDesc()) * 10000 + nCardHome() * 100;
@@ -253,6 +254,9 @@ int Board::eval() const
 		int n = lst.size() - i;
 		if( i == 0 ) n = n*2;
 		ev += n;
+		while( --i >= 0 ) {	//	末尾順列以前にカードがある場合は、末尾までの枚数を評価値からマイナスする
+			ev -= n++;
+		}
 	}
 	return ev;
 }
