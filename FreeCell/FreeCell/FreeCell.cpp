@@ -7,6 +7,8 @@
 
 using namespace std;
 
+typedef unsigned int uint;
+
 //unordered_map<string, int> g_map;
 unordered_map<string, Move> g_map;
 
@@ -15,7 +17,8 @@ void	test_genMove();			//	移動手生成
 void	test_genMove1();		//	１枚移動手のみ生成
 void	test_eval();
 void test_120811();
-void test_search();
+bool test_search(uint seed = -1);
+void test_solve(int N_GAME = 100);					//	100回ゲームを行い、クリア率を計算
 void searchMovable6(Board& bd);		//	初期状態から降順列６枚以上移動可能状態を探す
 bool searchHomePlusMovable6(Board& bd);		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
 bool do_search(Board& bd, vector<string>& hist);		//	現状態から、評価値が増加する状態を探す
@@ -27,7 +30,8 @@ int main()
 	//test_genMove();
 	//test_genMove1();
 	//test_120811();
-	test_search();
+	//test_search();
+	test_solve(10);
 	//
 #if	0
 	if (true) {
@@ -639,16 +643,36 @@ void test_120811()
 		cout << "eval = " << bd.eval() << "\n\n";
 	}
 }
-void test_search()
+void test_solve(int N_GAME)					//	100回ゲームを行い、クリア率を計算
 {
-	auto seed = g_rd();
-	g_mt = mt19937{7};		//	乱数シード指定
+	vector<int> vSeed;
+	vector<bool> vWin;
+	for (int i = 0; i < N_GAME; ++i) {
+		int seed = g_rd() & 0x7fffffff;
+		vSeed.push_back(seed);
+		vWin.push_back(test_search(seed));
+	}
+	cout << "\nresult\tseed\n";
+	cout << "-------\t----------------\n";
+	int nWin = 0;
+	for (int i = 0; i < N_GAME; ++i) {
+		cout << (vWin[i]?"win\t":"lose\t") << vSeed[i] << "\n";
+		if( vWin[i] ) ++nWin;
+	}
+	cout << "-------\t----------------\n";
+	cout << "Rate = " << nWin << "/" << N_GAME << " = " << 100.0*nWin/N_GAME << "%\n";
+}
+bool test_search(uint seed)
+{
+	if( seed == -1 )
+		seed = g_rd();
+	g_mt = mt19937{seed};		//	乱数シード指定
 	Board bd;
 	vector<string> hist;		//	中間目標リスト
 	searchMovable6(bd);		//	初期状態から降順列６枚以上移動可能状態を探す
 	hist.push_back(bd.hkeyText());
 	int cnt = 0;
-	while( bd.nCardHome() < 52 && ++cnt < 200 ) {
+	while( bd.nCardHome() < 52 && ++cnt < 100 ) {
 		cout << "cnt = " << cnt << "\n";
 		//if( !searchHomePlusMovable6(bd) )		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
 		Move mv;
@@ -663,7 +687,8 @@ void test_search()
 			break;
 		cout << "eval = " << bd.eval() << "\n";
 	}
-	cout << "seed = " << seed << "\n";
+	//cout << "seed = " << seed << "\n";
+	return bd.nCardHome() == 52;
 }
 void	test_genMove()
 {
