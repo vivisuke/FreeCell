@@ -11,14 +11,13 @@ using namespace std;
 unordered_map<string, Move> g_map;
 
 
-bool search(Board& bd, vector<string>& hist);	//	現状態から、評価値が増加する状態を探す
 void	test_genMove();			//	移動手生成
 void	test_genMove1();		//	１枚移動手のみ生成
 void test_120811();
 void test_search();
 void searchMovable6(Board& bd);		//	初期状態から降順列６枚以上移動可能状態を探す
 bool searchHomePlusMovable6(Board& bd);		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
-bool search(Board& bd, vector<string>& hist);		//	現状態から、評価値が増加する状態を探す
+bool do_search(Board& bd, vector<string>& hist);		//	現状態から、評価値が増加する状態を探す
 
 int main()
 {
@@ -78,7 +77,7 @@ int main()
 			cout << "eval = " << bd.eval() << "\n";
 		}
 		cout << bd.hkeyHex() << "\n";
-		if( !search(bd, hist) )		//	現状態から、評価値が増加する状態を探す
+		if( !do_search(bd, hist) )		//	現状態から、評価値が増加する状態を探す
 			break;
 		cout << "eval = " << bd.eval() << "\n";
 	}
@@ -523,7 +522,7 @@ bool searchHomePlusMovable6(Board& bd)
 	return true;
 }
 //	現状態から、評価値が増加する状態を探す
-bool search(Board& bd, vector<string>& hist)
+bool do_search(Board& bd, vector<string>& hist)
 {
 	if( bd.nCardHome() >= 52) return false;
 	//const int N_MOVABLE = 6;
@@ -539,11 +538,14 @@ bool search(Board& bd, vector<string>& hist)
 	g_map[hktxt] = Move(0,0);
 	vector<string> lst, lst2;
 	lst.push_back(hktxt);
-	for (int n = 1; n <= 7; ++n) {		//	最大7手探索
+	for (int n = 1; n <= 6; ++n) {		//	最大6手探索
 		lst2.clear();	//	末端ノード
 		for(const auto& txt: lst) {
 			bd.set(txt);
 			assert(bd.checkNCard());
+			Move mv;
+			while( bd.genSafeMove(mv) )
+				bd.doMove(mv);
 			Moves mvs;
 			bd.genMoves(mvs);
 			if( lst.empty() ) continue;
@@ -629,13 +631,13 @@ void test_120811()
 	for (int i = 0; i < 10; ++i) {
 		//cout << "i = " << i << "\n";
 		//cout << bd.hkeyHex() << "\n";
-		search(bd, hist);
+		do_search(bd, hist);
 		cout << "eval = " << bd.eval() << "\n\n";
 	}
 }
 void test_search()
 {
-	g_mt = mt19937{5};		//	乱数シード指定
+	g_mt = mt19937{0};		//	乱数シード指定
 	Board bd;
 	vector<string> hist;		//	中間目標リスト
 	searchMovable6(bd);		//	初期状態から降順列６枚以上移動可能状態を探す
@@ -652,7 +654,7 @@ void test_search()
 			cout << "eval = " << bd.eval() << "\n";
 		}
 		cout << bd.hkeyHex() << "\n";
-		if( !search(bd, hist) )		//	現状態から、評価値が増加する状態を探す
+		if( !do_search(bd, hist) )		//	現状態から、評価値が増加する状態を探す
 			break;
 		cout << "eval = " << bd.eval() << "\n";
 	}

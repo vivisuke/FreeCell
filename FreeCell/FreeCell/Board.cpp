@@ -248,7 +248,7 @@ int Board::eval() const
 	int ev = min(6, nMobableDesc()) * 10000 + nCardHome() * 100;
 	for(const auto& lst: m_column) {
 		if( lst.empty() ) continue;
-		int i = lst.size();
+		int i = lst.size() - 1;
 		while ( i != 0 && canPushBack(lst[i-1], lst[i]) ) --i;
 		int n = lst.size() - i;
 		if( i == 0 ) n = n*2;
