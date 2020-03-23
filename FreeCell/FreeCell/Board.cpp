@@ -38,8 +38,12 @@ string to_card_string(card_t c)
 	case CLUB:	txt += "C";	break;
 	case HEART:	txt += "H";	break;
 	case DIAMOND:	txt += "D";	break;
+	default:
+		exit(-1);
 	}
 	int n = c & NUM_MASK;
+	if( n <= 0 || n > 13 )
+		exit(-1);
 	switch( n ) {
 	case 1:	txt += "A";	break;
 	case 10:	txt += "T";	break;

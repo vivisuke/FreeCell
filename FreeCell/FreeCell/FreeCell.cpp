@@ -31,7 +31,8 @@ int main()
 	//test_genMove1();
 	//test_120811();
 	//test_search();
-	test_solve(10);
+	test_search(1896902098);
+	//test_solve(50);
 	//
 #if	0
 	if (true) {
@@ -545,6 +546,8 @@ bool do_search(Board& bd, vector<string>& hist)
 	vector<string> lst, lst2;
 	lst.push_back(hktxt);
 	for (int n = 1; n <= 6; ++n) {		//	最大6手探索
+		if( lst.empty() )
+			return false;
 		lst2.clear();	//	末端ノード
 		for(const auto& txt: lst) {
 			bd.set(txt);
@@ -556,7 +559,10 @@ bool do_search(Board& bd, vector<string>& hist)
 #endif
 			Moves mvs;
 			bd.genMoves(mvs);
-			if( lst.empty() ) continue;
+			if( lst.empty() ) {
+				//return false;
+				continue;
+			}
 			for(const auto& mv: mvs) {
 				bd.doMove(mv);
 				if( !bd.checkNCard() )
@@ -595,6 +601,7 @@ bool do_search(Board& bd, vector<string>& hist)
     cout << "dur: " << msec << "msec\n";
     //if( !found ) return false;
     //	手順表示
+	assert(!mxhk.empty());
     hkey = mxhk;
 	bd.set(mxhk);
 	Moves mvs;
@@ -666,6 +673,7 @@ bool test_search(uint seed)
 {
 	if( seed == -1 )
 		seed = g_rd();
+	cout << "seed = " << seed << "\n";
 	g_mt = mt19937{seed};		//	乱数シード指定
 	Board bd;
 	vector<string> hist;		//	中間目標リスト
