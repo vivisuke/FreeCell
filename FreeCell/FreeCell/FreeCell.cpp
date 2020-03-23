@@ -10,6 +10,8 @@ using namespace std;
 //unordered_map<string, int> g_map;
 unordered_map<string, Move> g_map;
 
+
+bool search(Board& bd, vector<string>& hist);	//	現状態から、評価値が増加する状態を探す
 void	test_genMove();			//	移動手生成
 void	test_genMove1();		//	１枚移動手のみ生成
 void test_120811();
@@ -537,7 +539,7 @@ bool search(Board& bd, vector<string>& hist)
 	g_map[hktxt] = Move(0,0);
 	vector<string> lst, lst2;
 	lst.push_back(hktxt);
-	for (int n = 1; n <= 6; ++n) {		//	最大6手探索
+	for (int n = 1; n <= 7; ++n) {		//	最大7手探索
 		lst2.clear();	//	末端ノード
 		for(const auto& txt: lst) {
 			bd.set(txt);
@@ -633,12 +635,13 @@ void test_120811()
 }
 void test_search()
 {
+	g_mt = mt19937{5};		//	乱数シード指定
 	Board bd;
 	vector<string> hist;		//	中間目標リスト
 	searchMovable6(bd);		//	初期状態から降順列６枚以上移動可能状態を探す
 	hist.push_back(bd.hkeyText());
 	int cnt = 0;
-	while( bd.nCardHome() < 52 && ++cnt < 500 ) {
+	while( bd.nCardHome() < 52 && ++cnt < 200 ) {
 		cout << "cnt = " << cnt << "\n";
 		//if( !searchHomePlusMovable6(bd) )		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
 		Move mv;
@@ -656,6 +659,16 @@ void test_search()
 }
 void	test_genMove()
 {
+	if (false) {
+		g_mt = mt19937{1};
+		Board bd;
+		cout << bd.text() << "\n";
+	}
+	if (false) {
+		g_mt = mt19937{1};
+		Board bd;
+		cout << bd.text() << "\n";
+	}
 	if (true) {
 		Board bd;
 		string hk0 = { 0x03,0x14,0x00,0x00,0x00,0x02,0x06,0x02,0x2b,0x3d,0x1d,0x01,0x2a,0x15,0x28,0x17,0x36,0x05,0x00,0x27,
