@@ -16,9 +16,11 @@ unordered_map<string, Move> g_map;
 void	test_genMove();			//	移動手生成
 void	test_genMove1();		//	１枚移動手のみ生成
 void	test_eval();
+//void	test_openColumn();		//	列をオープンに挑戦
 void test_120811();
-bool test_search(uint seed = -1);
+bool test_search(int&, uint seed = -1);
 void test_solve(int N_GAME = 100);					//	100回ゲームを行い、クリア率を計算
+void	test_searchMovable6();
 void searchMovable6(Board& bd);		//	初期状態から降順列６枚以上移動可能状態を探す
 bool searchHomePlusMovable6(Board& bd);		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
 bool do_search(Board& bd, vector<string>& hist);		//	現状態から、評価値が増加する状態を探す
@@ -31,8 +33,9 @@ int main()
 	//test_genMove1();
 	//test_120811();
 	//test_search();
-	test_search(1896902098);
-	//test_solve(50);
+	//test_search(1896902098);
+	test_solve(10);
+	//test_searchMovable6();
 	//
 #if	0
 	if (true) {
@@ -370,6 +373,13 @@ int main()
 	//
     std::cout << "OK\n";
 }
+void	test_searchMovable6()
+{
+	g_mt = mt19937{1896902098};		//	乱数シード指定
+	Board bd;
+	cout << bd.text() << "\n";
+	searchMovable6(bd);
+}
 void searchMovable6(Board& bd)		//	初期状態から降順列６枚以上移動可能状態を探す
 {
 	//Board bd;
@@ -378,6 +388,7 @@ void searchMovable6(Board& bd)		//	初期状態から降順列６枚以上移動
 	auto hktxt = bd.hkeyText();
 	int mxnm = 0;		//	最大移動可能降順列数
 	string mxnmhk;		//	最大移動可能降順列数を与える局面ハッシュテキスト
+	string openhk;		//	カラムが空いて、空きフリーセルが１以上の局面ハッシュテキスト
 	g_map.clear();
 	g_map[hktxt] = Move(0,0);
 	vector<string> lst, lst2;
@@ -402,6 +413,8 @@ void searchMovable6(Board& bd)		//	初期状態から降順列６枚以上移動
 						mxnm = nm;
 						if( mxnm > 5 )
 							cout << "nm = " << mxnm << "\n" << bd.text() << "\n";
+					} else if( bd.nEmptyColumns() != 0 && bd.nCardFreeCell() == 1 ) {
+						openhk = bd.hkeyText();
 					}
 					g_map[hk] = mv;
 					lst2.push_back(hk);
@@ -419,6 +432,8 @@ void searchMovable6(Board& bd)		//	初期状態から降順列６枚以上移動
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
     cout << "dur: " << msec << "msec\n";
     //	手順表示
+    if( mxnm == 5 && !openhk.empty() )
+    	mxnmhk = openhk;
     string hk = mxnmhk;
 	bd.set(hk);
 	Moves mvs;
@@ -653,23 +668,26 @@ void test_120811()
 void test_solve(int N_GAME)					//	100回ゲームを行い、クリア率を計算
 {
 	vector<int> vSeed;
+	vector<int> vNOpen;		//	列オープン時移動可能数
 	vector<bool> vWin;
 	for (int i = 0; i < N_GAME; ++i) {
 		int seed = g_rd() & 0x7fffffff;
 		vSeed.push_back(seed);
-		vWin.push_back(test_search(seed));
+		int nOpen;
+		vWin.push_back(test_search(nOpen, seed));
+		vNOpen.push_back(nOpen);
 	}
-	cout << "\nresult\tseed\n";
-	cout << "-------\t----------------\n";
+	cout << "\nresult\tnOpen\tseed\n";
+	cout << "-------\t-------\t----------------\n";
 	int nWin = 0;
 	for (int i = 0; i < N_GAME; ++i) {
-		cout << (vWin[i]?"win\t":"lose\t") << vSeed[i] << "\n";
+		cout << (vWin[i]?"win\t":"lose\t") << vNOpen[i] << "\t" << vSeed[i] << "\n";
 		if( vWin[i] ) ++nWin;
 	}
-	cout << "-------\t----------------\n";
+	cout << "-------\t-------\t----------------\n";
 	cout << "Rate = " << nWin << "/" << N_GAME << " = " << 100.0*nWin/N_GAME << "%\n";
 }
-bool test_search(uint seed)
+bool test_search(int& nOpen, uint seed)
 {
 	if( seed == -1 )
 		seed = g_rd();
@@ -678,6 +696,7 @@ bool test_search(uint seed)
 	Board bd;
 	vector<string> hist;		//	中間目標リスト
 	searchMovable6(bd);		//	初期状態から降順列６枚以上移動可能状態を探す
+	nOpen = bd.nMobableDesc();		//	列オープン時移動可能数
 	hist.push_back(bd.hkeyText());
 	int cnt = 0;
 	while( bd.nCardHome() < 52 && ++cnt < 100 ) {
