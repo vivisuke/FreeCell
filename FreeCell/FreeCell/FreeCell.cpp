@@ -13,6 +13,7 @@ typedef unsigned int uint;
 unordered_map<string, Move> g_map;
 
 
+void	test_initMS();
 void	test_genMove();			//	移動手生成
 void	test_genMove1();		//	１枚移動手のみ生成
 void	test_eval();
@@ -28,13 +29,14 @@ bool do_search(Board& bd, vector<string>& hist);		//	現状態から、評価値
 int main()
 {
 	//cout << "♠♣♥◆\n";
+	test_initMS();
 	//test_eval();
 	//test_genMove();
 	//test_genMove1();
 	//test_120811();
 	//test_search();
 	//test_search(1896902098);
-	test_searchMovable6(100);
+	//test_searchMovable6(100);
 	//test_solve(10);
 	//
 #if	0
@@ -375,11 +377,12 @@ int main()
 }
 void	test_searchMovable6(int N_GAME)
 {
+	const int DEPTH = 14;
 	vector<int> vc;
 	for (int i = 0; i < N_GAME; ++i) {
 		Board bd;
 		cout << bd.text() << "\n";
-		searchMovable6(bd, 8);
+		searchMovable6(bd, DEPTH);
 		int nMove = bd.nMobableDesc();
 		if( vc.size() <= nMove ) {
 			vc.resize(nMove + 1, 0);
@@ -393,6 +396,7 @@ void	test_searchMovable6(int N_GAME)
 		sum += i * vc[i];
 		cout << i << ": " << vc[i] << "\n";
 	}
+	cout << "depth = " << DEPTH << "\n";
 	cout << "ave = " << (double)sum / N_GAME << "\n";
 #if	0
 	g_mt = mt19937{1896902098};		//	乱数シード指定
@@ -816,4 +820,13 @@ void test_eval()
 		cout << "eval = " << bd.eval() << "\n";
 		cout << "\n";
 	}
+}
+void test_initMS()
+{
+	//const int n = 178;
+	const int n = 617;
+	Board bd;
+	bd.initMS(n);
+	cout << "MS#" << n << ":\n";
+	cout << bd.text() << "\n";
 }

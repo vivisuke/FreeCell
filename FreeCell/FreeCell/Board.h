@@ -74,6 +74,7 @@ public:
 	bool	isSafeToHome(card_t) const;		//	カードを安全にホーム移動できるか？
 public:
 	void	init();		//	初期化・カードを配る
+	void	initMS(int);		//	MS#n 初期化・カードを配る
 	void	initNoShuffle();		//	初期化・カードを配る
 	void	set(const std::string&);
 	void	doMove(const Move&);

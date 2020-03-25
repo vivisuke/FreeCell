@@ -117,6 +117,41 @@ void Board::init()		//	初期化・カードを配る
 		m_column[i%N_COLUMN].push_back(deck[i]);	//	デックのカードを順に m_column[] に格納
 	}
 }
+void Board::initMS(int seed)		//	MS#n 初期化・カードを配る
+{
+	m_nCardFreeCell = 0;		//	フリーセルのカード数
+	for(auto& x: m_freeCell) x = 0;
+	for(auto& x: m_home) x = 0;
+	for(auto& x: m_column) x.clear();
+	//
+	srand(seed);
+	vector<int> deck(N_CARD);
+	for (int i = 0; i < N_CARD; ++i) deck[i] = i;
+	vector<int> vv(8*21, -1);
+	int rest = N_CARD;
+	for (int c = 0; c < N_CARD; ++c) {
+		int j = rand() % rest;
+#if	1
+		vv[c] = deck[j];
+#else
+		int y = c % 8;
+		int x = c / 8;
+		vv[y*8+x] = deck[j];
+#endif
+		deck[j] = deck[--rest];
+	}
+	for (int i = 0; i < N_CARD; ++i) {
+		auto mscd = vv[i];
+		card_t cd = mscd / 4 + 1;
+		switch( mscd % 4 ) {
+		case 0:	cd |= CLUB; break;
+		case 1:	cd |= DIAMOND; break;
+		case 2:	cd |= HEART; break;
+		case 3:	cd |= SPADE; break;
+		}
+		m_column[i % N_COLUMN].push_back(cd);
+	}
+}
 void Board::initNoShuffle()		//	初期化・カードを配る
 {
 	m_nCardFreeCell = 0;		//	フリーセルのカード数
