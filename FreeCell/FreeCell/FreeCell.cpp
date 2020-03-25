@@ -21,7 +21,7 @@ void test_120811();
 bool test_search(int&, uint seed = -1);
 void test_solve(int N_GAME = 100);					//	100回ゲームを行い、クリア率を計算
 void	test_searchMovable6(int N_GAME = 100);			//	100回ゲームを行い、統計表示
-void searchMovable6(Board& bd);		//	初期状態から降順列６枚以上移動可能状態を探す
+void searchMovable6(Board& bd, int depth=10);		//	初期状態から降順列６枚以上移動可能状態を探す
 bool searchHomePlusMovable6(Board& bd);		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
 bool do_search(Board& bd, vector<string>& hist);		//	現状態から、評価値が増加する状態を探す
 
@@ -379,7 +379,7 @@ void	test_searchMovable6(int N_GAME)
 	for (int i = 0; i < N_GAME; ++i) {
 		Board bd;
 		cout << bd.text() << "\n";
-		searchMovable6(bd);
+		searchMovable6(bd, 8);
 		int nMove = bd.nMobableDesc();
 		if( vc.size() <= nMove ) {
 			vc.resize(nMove + 1, 0);
@@ -388,9 +388,12 @@ void	test_searchMovable6(int N_GAME)
 		cout << "nMove = " << nMove << "\n";
 		cout << bd.text() << "\n";
 	}
+	int sum = 0;
 	for (int i = 0; i != vc.size(); ++i) {
+		sum += i * vc[i];
 		cout << i << ": " << vc[i] << "\n";
 	}
+	cout << "ave = " << (double)sum / N_GAME << "\n";
 #if	0
 	g_mt = mt19937{1896902098};		//	乱数シード指定
 	Board bd;
@@ -398,7 +401,7 @@ void	test_searchMovable6(int N_GAME)
 	searchMovable6(bd);
 #endif
 }
-void searchMovable6(Board& bd)		//	初期状態から降順列６枚以上移動可能状態を探す
+void searchMovable6(Board& bd, int depth)		//	初期状態から降順列６枚以上移動可能状態を探す
 {
 	//Board bd;
 	bd.init();
@@ -411,7 +414,7 @@ void searchMovable6(Board& bd)		//	初期状態から降順列６枚以上移動
 	g_map[hktxt] = Move(0,0);
 	vector<string> lst, lst2;
 	lst.push_back(hktxt);
-	for (int n = 1; n <= 10; ++n) {		//	手数
+	for (int n = 1; n <= depth; ++n) {		//	手数
 		lst2.clear();	//	末端ノード
 		for(const auto& txt: lst) {
 			bd.set(txt);
