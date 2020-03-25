@@ -824,9 +824,11 @@ void test_eval()
 void test_initMS()
 {
 	//const int n = 178;
-	const int n = 617;
+	//const int n = 617;
+	const int n = 11982;
 	Board bd;
 	bd.initMS(n);
 	cout << "MS#" << n << ":\n";
 	cout << bd.text() << "\n";
+	searchMovable6(bd, 16);
 }

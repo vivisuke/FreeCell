@@ -99,12 +99,16 @@ bool Board::operator==(const Board& x) const
 	}
 	return true;
 }
-void Board::init()		//	初期化・カードを配る
+void Board::init0()		//	初期化
 {
 	m_nCardFreeCell = 0;		//	フリーセルのカード数
 	for(auto& x: m_freeCell) x = 0;
 	for(auto& x: m_home) x = 0;
 	for(auto& x: m_column) x.clear();
+}
+void Board::init()		//	初期化・カードを配る
+{
+	init0();
 	vector<card_t> deck;
 	card_t col = 0;
 	for (int c = 0; c != N_COL; ++c, col+=0x10) {
@@ -119,10 +123,7 @@ void Board::init()		//	初期化・カードを配る
 }
 void Board::initMS(int seed)		//	MS#n 初期化・カードを配る
 {
-	m_nCardFreeCell = 0;		//	フリーセルのカード数
-	for(auto& x: m_freeCell) x = 0;
-	for(auto& x: m_home) x = 0;
-	for(auto& x: m_column) x.clear();
+	init0();
 	//
 	srand(seed);
 	vector<int> deck(N_CARD);
@@ -154,10 +155,7 @@ void Board::initMS(int seed)		//	MS#n 初期化・カードを配る
 }
 void Board::initNoShuffle()		//	初期化・カードを配る
 {
-	m_nCardFreeCell = 0;		//	フリーセルのカード数
-	for(auto& x: m_freeCell) x = 0;
-	for(auto& x: m_home) x = 0;
-	for(auto& x: m_column) x.clear();
+	init0();
 	vector<card_t> deck;
 	card_t col = 0;
 	for (int c = 0; c != N_COL; ++c, col+=0x10) {

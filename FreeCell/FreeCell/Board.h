@@ -73,7 +73,8 @@ public:
 	bool	genSafeMove(Move&) const;		//	安全にホーム移動できる着手生成
 	bool	isSafeToHome(card_t) const;		//	カードを安全にホーム移動できるか？
 public:
-	void	init();		//	初期化・カードを配る
+	void	init0();		//	初期化
+	void	init();			//	初期化・カードを配る
 	void	initMS(int);		//	MS#n 初期化・カードを配る
 	void	initNoShuffle();		//	初期化・カードを配る
 	void	set(const std::string&);

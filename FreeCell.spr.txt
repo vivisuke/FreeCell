@@ -88,11 +88,12 @@
 ◎ C 03/25 03/25 0.001 ToDo MS FreeCell と同じ初期配置を生成可能に？
 ◎ C 03/25 03/25 0.001 ToDo 空列オープンだけを100回行い、統計表示
 ◎ C 03/25 03/25 0.001 ToDo 空列オープン：最大手数を指定可能に
-● C 03/25             ToDo m_nCardFreeCelli, m_freeCell, m_home, m_column の初期化部分を関数化
-● C 03/25             ToDo 
-● C 03/25             ToDo 
-● C 03/25             ToDo 
-● C 03/25             ToDo 
-● C 03/25             ToDo 
-● C 03/25             ToDo 
-● C 03/25             ToDo 
+◎ C 03/25 03/26 0.001 ToDo m_nCardFreeCelli, m_freeCell, m_home, m_column の初期化部分を関数化
+● C 03/26             ToDo 評価関数：降順列全てをノーペナルティにするのではなく、移動可能枚数のみをノーペナルティにする
+							ただし、列が降順列のみの場合はノーペナルティ？
+							ただし、列最初のＫはノーペナルティ？
+● C 03/26             ToDo 
+● C 03/26             ToDo 
+● C 03/26             ToDo 
+● C 03/26             ToDo 
+● C 03/26             ToDo 
