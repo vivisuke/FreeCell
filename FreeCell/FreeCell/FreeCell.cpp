@@ -20,7 +20,7 @@ void	test_eval();
 void test_120811();
 bool test_search(int&, uint seed = -1);
 void test_solve(int N_GAME = 100);					//	100回ゲームを行い、クリア率を計算
-void	test_searchMovable6();
+void	test_searchMovable6(int N_GAME = 100);			//	100回ゲームを行い、統計表示
 void searchMovable6(Board& bd);		//	初期状態から降順列６枚以上移動可能状態を探す
 bool searchHomePlusMovable6(Board& bd);		//	現状態から、降順列６枚以上移動可能 かつ Home枚数が増えた状態を探す
 bool do_search(Board& bd, vector<string>& hist);		//	現状態から、評価値が増加する状態を探す
@@ -34,8 +34,8 @@ int main()
 	//test_120811();
 	//test_search();
 	//test_search(1896902098);
-	test_solve(10);
-	//test_searchMovable6();
+	test_searchMovable6(100);
+	//test_solve(10);
 	//
 #if	0
 	if (true) {
@@ -373,12 +373,30 @@ int main()
 	//
     std::cout << "OK\n";
 }
-void	test_searchMovable6()
+void	test_searchMovable6(int N_GAME)
 {
+	vector<int> vc;
+	for (int i = 0; i < N_GAME; ++i) {
+		Board bd;
+		cout << bd.text() << "\n";
+		searchMovable6(bd);
+		int nMove = bd.nMobableDesc();
+		if( vc.size() <= nMove ) {
+			vc.resize(nMove + 1, 0);
+		}
+		vc[nMove] += 1;
+		cout << "nMove = " << nMove << "\n";
+		cout << bd.text() << "\n";
+	}
+	for (int i = 0; i != vc.size(); ++i) {
+		cout << i << ": " << vc[i] << "\n";
+	}
+#if	0
 	g_mt = mt19937{1896902098};		//	乱数シード指定
 	Board bd;
 	cout << bd.text() << "\n";
 	searchMovable6(bd);
+#endif
 }
 void searchMovable6(Board& bd)		//	初期状態から降順列６枚以上移動可能状態を探す
 {
