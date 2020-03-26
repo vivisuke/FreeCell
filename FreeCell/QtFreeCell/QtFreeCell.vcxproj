@@ -80,6 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FreeCellWidget.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
   </ItemGroup>
@@ -91,6 +92,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="MainWindow.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="FreeCellWidget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -95,5 +95,15 @@
 ● C 03/26             ToDo 評価関数：小さい数字が奥にあるほど大きなペナルティにする？
 ● C 03/26             ToDo ヒューリスティックに着手を決めてみる？
 ◎ C 03/27 03/27 0.001 ToDo QtFreeCell プロジェクト追加
+◎ C 03/27 03/27 0.001 ToDo QtFreeCell：FreeCellWidget クラスを追加し、セントラルウィジェットに
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
 ● C 03/27             ToDo 
 ● C 03/27             ToDo 
