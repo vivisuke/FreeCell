@@ -12,4 +12,7 @@ public:
 protected:
 	void	paintEvent(QPaintEvent*);
 private:
+	QImage		m_imgCard;		//	カード全体画像
+	QRect		m_rctCard;			//	カード全体画像サイズ
+	QRect		m_rctCard1;		//	カード1枚画像サイズ
 };
