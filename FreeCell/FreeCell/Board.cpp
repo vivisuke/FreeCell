@@ -287,13 +287,37 @@ int Board::eval() const
 	for(const auto& lst: m_column) {
 		if( lst.empty() ) continue;
 		int i = lst.size() - 1;
-		while ( i != 0 && canPushBack(lst[i-1], lst[i]) ) --i;
-		int n = lst.size() - i;
+		while ( i != 0 && canPushBack(lst[i-1], lst[i]) ) --i;		//	[i-1], [i] が降順列であれば、--i
+		int n = lst.size() - i;			//	末尾降順列枚数
 		if( i == 0 ) n = n*2;
 		ev += n;
 		while( --i >= 0 ) {	//	末尾順列以前にカードがある場合は、末尾までの枚数を評価値からマイナスする
 			ev -= n++;
 		}
+	}
+	return ev;
+}
+//	評価値を返す（ホームカード数・列評価）
+//		列評価：
+//			空列・降順列のみは ±０
+//			末尾カードは±０、その前は -1, さらにその前は -2, ...（-1*末尾までの枚数）
+//			末尾が降順列の場合、移動可能枚数までは±０、それより前は -1*末尾までの枚数
+//			ただし、一番前がＫの場合は、Ｋからの降順列は±０
+int Board::eval2() const
+{
+	int nm = nMobableDesc();		//	移動可能枚数
+	//int ev = nCardHome() * 10000;
+	int ev = min(6, nMobableDesc()) * 10000 + nCardHome() * 100;
+	for(const auto& lst: m_column) {
+		if( lst.empty() ) continue;		//	空列：±０
+		int i = lst.size() - 1;
+		while ( i != 0 && canPushBack(lst[i-1], lst[i]) ) --i;		//	[i-1], [i] が降順列であれば、--i
+		if( i == 0 ) continue;				//	降順列のみ：±０
+		int n = lst.size() - i;			//	末尾降順列枚数
+		n = min(n, nm);				//	移動可能枚数：±０
+		i = lst.size() - n;
+		if( cardNum(lst[0]) == 13 ) --i;
+		ev -= i * i;
 	}
 	return ev;
 }

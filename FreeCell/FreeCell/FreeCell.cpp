@@ -29,7 +29,7 @@ bool do_search(Board& bd, vector<string>& hist);		//	現状態から、評価値
 int main()
 {
 	//cout << "♠♣♥◆\n";
-	test_initMS();
+	//test_initMS();
 	//test_eval();
 	//test_genMove();
 	//test_genMove1();
@@ -37,7 +37,7 @@ int main()
 	//test_search();
 	//test_search(1896902098);
 	//test_searchMovable6(100);
-	//test_solve(10);
+	test_solve(10);
 	//
 #if	0
 	if (true) {
@@ -579,7 +579,7 @@ bool do_search(Board& bd, vector<string>& hist)
 	auto hktxt = bd.hkeyText();
 	bool found = false;
 	string hkey;
-	int mxev = 0;		//	最大評価値
+	int mxev = INT_MIN;		//	最大評価値
 	string mxhk;		//	最大評価値を与える局面ハッシュテキスト
 	g_map.clear();
 	g_map[hktxt] = Move(0,0);
@@ -610,7 +610,8 @@ bool do_search(Board& bd, vector<string>& hist)
 				assert( bd.checkNCard() );
 				auto hk = bd.hkeyText();
 				if( g_map.find(hk) == g_map.end() ) {
-					auto ev = bd.eval();
+					//auto ev = bd.eval();
+					auto ev = bd.eval2();
 					if( ev > mxev && ev != ev0 ) {
 						auto hk = bd.hkeyText();
 						//if( hk != hist.back() )
@@ -732,7 +733,8 @@ bool test_search(int& nOpen, uint seed)
 			cout << "Move: " << mv.text() << "\n";
 			bd.doMove(mv);
 			cout << bd.text() << "\n";
-			cout << "eval = " << bd.eval() << "\n";
+			//cout << "eval = " << bd.eval() << "\n";
+			cout << "eval2 = " << bd.eval2() << "\n";
 		}
 		cout << bd.hkeyHex() << "\n";
 		if( !do_search(bd, hist) )		//	現状態から、評価値が増加する状態を探す
