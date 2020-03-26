@@ -7,4 +7,5 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.setupUi(this);
 	auto fc = new FreeCellWidget();
 	setCentralWidget(fc);
+	setWindowTitle("QtFreeCell");
 }
