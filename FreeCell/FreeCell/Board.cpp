@@ -79,7 +79,7 @@ Board::Board(const Board& x)
 		m_freeCell[i] = x.m_freeCell[i];
 	}
 	for (int i = 0; i < N_HOME; ++i) {
-		m_home[i] = x.m_home[i];
+		m_homeCell[i] = x.m_homeCell[i];
 	}
 	for (int i = 0; i < N_COLUMN; ++i) {
 		m_column[i] = x.m_column[i];
@@ -92,7 +92,7 @@ bool Board::operator==(const Board& x) const
 		if( m_freeCell[i] != x.m_freeCell[i] ) return false;
 	}
 	for (int i = 0; i < N_HOME; ++i) {
-		if( m_home[i] != x.m_home[i] ) return false;
+		if( m_homeCell[i] != x.m_homeCell[i] ) return false;
 	}
 	for (int i = 0; i < N_COLUMN; ++i) {
 		if( m_column[i] != x.m_column[i] ) return false;
@@ -103,7 +103,7 @@ void Board::init0()		//	初期化
 {
 	m_nCardFreeCell = 0;		//	フリーセルのカード数
 	for(auto& x: m_freeCell) x = 0;
-	for(auto& x: m_home) x = 0;
+	for(auto& x: m_homeCell) x = 0;
 	for(auto& x: m_column) x.clear();
 }
 void Board::init()		//	初期化・カードを配る
@@ -172,9 +172,9 @@ std::string Board::text() const
 {
 	string txt;
 	txt += "A: ";
-	//for(auto x: m_home) txt += to_card_string(x);
+	//for(auto x: m_homeCell) txt += to_card_string(x);
 	for (int i = 0; i < N_COL; ++i) {
-		txt += to_card_string(m_home[i] + (i<<NUM_BITS));
+		txt += to_card_string(m_homeCell[i] + (i<<NUM_BITS));
 	}
 	txt += "\n";
 	txt += "F: ";
@@ -219,7 +219,7 @@ std::string Board::hkeyText() const			//	ハッシュキーテキスト
 	for(const auto& lst: m_column) sz += lst.size() + 1;		//	+1 for '\0'
 	txt.resize(sz);
 	memcpy(&txt[0], (cchar*)&m_freeCell[0], N_FREECELL);		//	フリーセル状態
-	memcpy(&txt[N_FREECELL], (cchar*)&m_home[0], N_HOME);	//	ゴール状態
+	memcpy(&txt[N_FREECELL], (cchar*)&m_homeCell[0], N_HOME);	//	ゴール状態
 	int ix = N_FREECELL + N_HOME;
 	for(const auto& lst: m_column) {
 		if( lst.empty() ) {
@@ -231,6 +231,15 @@ std::string Board::hkeyText() const			//	ハッシュキーテキスト
 		}
 	}
 	return txt;
+}
+card_t Board::getAt(char pos) const
+{
+	if( pos >= 'A' && pos <= 'D' ) {		//	ホームセル
+		int ix = pos - 'A';
+		if( m_homeCell[ix] == 0 ) return 0;
+		return m_homeCell[ix] + (ix << NUM_BITS);
+	}
+	return 0;
 }
 card_t Board::popFrom(char pos)
 {
@@ -258,7 +267,7 @@ void Board::putTo(char pos, card_t cd)
 {
 	if( pos >= 'A' && pos <= 'D' ) {		//	ホームセルへ
 		int ix = cardColIX(cd);
-		m_home[ix] += 1;
+		m_homeCell[ix] += 1;
 		return;
 	}
 	if( pos >= 'F' && pos <= 'I' ) {		//	フリーセルへ
@@ -278,7 +287,7 @@ void Board::set(const std::string& txt)
 {
 	memcpy(&m_freeCell[0], (cchar*)&txt[0], N_FREECELL);		//	フリーセル状態
 	for(m_nCardFreeCell = 0; m_freeCell[m_nCardFreeCell] != 0; ++m_nCardFreeCell) {}
-	memcpy(&m_home[0], (cchar*)&txt[N_FREECELL], N_HOME);	//	ゴール状態
+	memcpy(&m_homeCell[0], (cchar*)&txt[N_FREECELL], N_HOME);	//	ゴール状態
 	int ix = N_FREECELL + N_HOME;
 	for(auto& lst: m_column) {
 		lst.clear();
@@ -288,7 +297,7 @@ void Board::set(const std::string& txt)
 }
 int Board::nCardHome() const
 {
-	return m_home[0] + m_home[1] + m_home[2] + m_home[3];
+	return m_homeCell[0] + m_homeCell[1] + m_homeCell[2] + m_homeCell[3];
 }
 int Board::nEmptyColumns() const			//	空欄カラム数を返す
 {
@@ -316,7 +325,7 @@ bool Board::checkNCard() const				//	カード数チェック
 		if( m_freeCell[i] != 0 )
 			return false;
 	}
-	for(auto c: m_home) n += c;
+	for(auto c: m_homeCell) n += c;
 	for(const auto& lst: m_column) n += lst.size();
 	return n == N_CARD;
 }
@@ -385,7 +394,7 @@ void Board::genMoves1(Moves& mvs /*, bool bTrue*/) const		//	１枚のみ移動�
 			}
 			//	ゴールへの移動
 			auto gi = cardColIX(sc);
-			if( m_home[gi] == cardNum(sc) - 1 ) {
+			if( m_homeCell[gi] == cardNum(sc) - 1 ) {
 				if( isSafeToHome(sc) )
 					mvs.emplace_back('0'+s, 'A'+gi);			//	ゴールへの移動
 			}
@@ -403,7 +412,7 @@ void Board::genMoves1(Moves& mvs /*, bool bTrue*/) const		//	１枚のみ移動�
 		}
 		//	ゴールへの移動
 		auto gi = cardColIX(sc);
-		if( m_home[gi] == cardNum(sc) - 1 ) {
+		if( m_homeCell[gi] == cardNum(sc) - 1 ) {
 			if( isSafeToHome(sc) )
 				mvs.emplace_back('F'+s, 'A'+gi);			//	ゴールへの移動
 		}
@@ -513,23 +522,23 @@ bool Board::canMoveToHome(card_t cd) const		//	カードをホーム移動でき
 {
 	int num = (int)cardNum(cd);
 	auto ix = cardColIX(cd);
-	return m_home[ix] == num - 1;
+	return m_homeCell[ix] == num - 1;
 }
 bool Board::isSafeToHome(card_t cd) const		//	カードを安全にホーム移動できるか？
 {
 	int num = (int)cardNum(cd);
 	auto ix = cardColIX(cd);
-	if( m_home[ix] != num - 1 )
+	if( m_homeCell[ix] != num - 1 )
 		return false;
 	num -= 2;
 	//auto col = cardCol(cd);
 	switch( ix ) {
 	case IX_SPADE:
 	case IX_CLUB:
-		return m_home[IX_HEART] >= num && m_home[IX_DIAMOND] >= num;
+		return m_homeCell[IX_HEART] >= num && m_homeCell[IX_DIAMOND] >= num;
 	case IX_HEART:
 	case IX_DIAMOND:
-		return m_home[IX_SPADE] >= num && m_home[IX_CLUB] >= num;
+		return m_homeCell[IX_SPADE] >= num && m_homeCell[IX_CLUB] >= num;
 	}
 	assert(0);
 	return false;
@@ -588,7 +597,7 @@ void Board::doMove(const Move& mv)
 	} else if( mv.m_dst <= 'D' ) {		//	ゴールへの移動
 		int ix = cardColIX(cd);
 		assert( ix == mv.m_dst - 'A' );
-		m_home[ix] += 1;
+		m_homeCell[ix] += 1;
 	}
 }
 void Board::unMove(const Move& mv)
@@ -614,8 +623,8 @@ void Board::unMove(const Move& mv)
 		m_nCardFreeCell -= 1;
 	} else if( mv.m_dst <= 'D' ) {		//	ゴールへの移動
 		int ix = mv.m_dst - 'A';
-		cd = (ix << NUM_BITS) + m_home[ix];
-		m_home[ix] -= 1;
+		cd = (ix << NUM_BITS) + m_homeCell[ix];
+		m_homeCell[ix] -= 1;
 	}
 	if( isdigit(mv.m_src) ) {		//	列からの移動
 		int ix = mv.m_src - '0';

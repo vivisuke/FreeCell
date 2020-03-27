@@ -73,6 +73,7 @@ public:
 	int	nMobableDescToEmpty() const;	//	空列への移動可能降順列数を返す
 	int	eval() const;							//	評価値を返す（移動可能枚数・ホームカード数・列評価）
 	int	eval2() const;						//	評価値を返す（ホームカード数・列評価）
+	card_t	getAt(char pos) const;
 	bool	canMoveToHome(card_t) const;
 	void	genMoves(Moves&) const;		//	可能着手生成
 	void	genMoves1(Moves& /*, bool=true*/) const;		//	１枚のみ移動する可能着手生成
@@ -92,6 +93,6 @@ public:
 private:
 	int			m_nCardFreeCell;		//	フリーセルのカード数
 	card_t		m_freeCell[N_FREECELL+1];		//	+1 for 番人
-	card_t		m_home[N_HOME];
+	card_t		m_homeCell[N_HOME];
 	std::vector<card_t>	m_column[N_COLUMN];
 };

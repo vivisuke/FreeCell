@@ -85,6 +85,13 @@ void FreeCellWidget::paintEvent(QPaintEvent*event)
 		auto r = QRect(px, py, m_cdWidth, m_cdHeight);
 		pt.drawText(r, Qt::AlignCenter|Qt::AlignVCenter, "A");
 	}
+	//	ホームセルカード表示
+	px = m_cdWidth * N_FREECELL;
+	for (int i = 0; i < N_HOME; ++i, px+=m_cdWidth) {
+		card_t cd = m_bd.getAt('A'+i);
+		if( cd != 0 )
+			drawCard(pt, px, 0, cd);
+	}
 	//	カラムのカード表示
 	px = 0;
 	//auto dy = m_cdWidth / 2.5;
