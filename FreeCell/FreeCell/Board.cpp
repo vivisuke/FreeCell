@@ -239,6 +239,9 @@ card_t Board::getAt(char pos) const
 		if( m_homeCell[ix] == 0 ) return 0;
 		return m_homeCell[ix] + (ix << NUM_BITS);
 	}
+	if( pos >= 'F' && pos <= 'I' ) {		//	フリーセル
+		return m_freeCell[pos - 'F'];
+	}
 	return 0;
 }
 card_t Board::popFrom(char pos)
@@ -523,6 +526,19 @@ bool Board::canMoveToHome(card_t cd) const		//	カードをホーム移動でき
 	int num = (int)cardNum(cd);
 	auto ix = cardColIX(cd);
 	return m_homeCell[ix] == num - 1;
+}
+bool Board::canMoveTo(char pos, card_t cd) const
+{
+	if( pos == 'A' )
+		return canMoveToHome(cd);
+	if( pos == 'F' )
+		return m_nCardFreeCell < N_FREECELL;
+	if( pos >= '0' && pos <= '7' ) {
+		const auto& lst = m_column[pos - '0'];
+		if( lst.empty() ) return true;
+		return canPushBack(lst.back(), cd);
+	}
+	return false;
 }
 bool Board::isSafeToHome(card_t cd) const		//	カードを安全にホーム移動できるか？
 {

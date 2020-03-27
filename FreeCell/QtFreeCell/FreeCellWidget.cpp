@@ -85,6 +85,13 @@ void FreeCellWidget::paintEvent(QPaintEvent*event)
 		auto r = QRect(px, py, m_cdWidth, m_cdHeight);
 		pt.drawText(r, Qt::AlignCenter|Qt::AlignVCenter, "A");
 	}
+	//	フリーセルカード表示
+	px = 0;
+	for (int i = 0; i < N_FREECELL; ++i, px+=m_cdWidth) {
+		card_t cd = m_bd.getAt('F'+i);
+		if( cd != 0 )
+			drawCard(pt, px, 0, cd);
+	}
 	//	ホームセルカード表示
 	px = m_cdWidth * N_FREECELL;
 	for (int i = 0; i < N_HOME; ++i, px+=m_cdWidth) {
@@ -158,6 +165,13 @@ void FreeCellWidget::mouseReleaseEvent(QMouseEvent* event)
 			m_mvCard = cd;
 			m_bd.popFrom('0'+clmn);
 			m_bd.putTo('A'+cardColIX(cd), cd);
+			update();
+			return;
+		}
+		if( m_bd.canMoveTo('F', cd) ) {
+			m_mvCard = cd;
+			m_bd.popFrom('0'+clmn);
+			m_bd.putTo('F'+m_bd.nCardFreeCell(), cd);
 			update();
 			return;
 		}
