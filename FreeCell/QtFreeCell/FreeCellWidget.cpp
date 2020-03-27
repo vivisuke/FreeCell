@@ -203,6 +203,9 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 		}
 	}
 	if( dst != 0 ) {
+		m_mvHist.push_back(Move(src, dst));
+		m_undoIX = m_mvHist.size();
+		//
 		m_mvCard = cd;
 		m_bd.popFrom(src);
 		m_bd.putTo(dst, cd);
@@ -221,8 +224,14 @@ void FreeCellWidget::newGame()
 void FreeCellWidget::doUndo()
 {
 	if( m_undoIX == 0 ) return;
+	auto mv = m_mvHist[--m_undoIX];
+	m_bd.unMove(mv);
+	update();
 }
 void FreeCellWidget::doRedo()
 {
 	if( m_undoIX == m_mvHist.size() ) return;
+	auto mv = m_mvHist[m_undoIX++];
+	m_bd.doMove(mv);
+	update();
 }
