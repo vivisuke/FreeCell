@@ -156,7 +156,27 @@ void FreeCellWidget::mouseReleaseEvent(QMouseEvent* event)
 	}
 	if( clmn == m_pressedClmn && row == m_pressedRow ) {		//	タップ
 		if( row < 0 ) {		//	フリーセル・ホームセルの場合
-			//	undone:
+			if( clmn < N_FREECELL ) {		//	フリーセルの場合
+				card_t cd = m_bd.getAt('F'+clmn);
+				if( m_bd.canMoveToHome(cd) ) {
+					m_mvCard = cd;
+					m_bd.popFrom('F'+clmn);
+					m_bd.putTo('A'+cardColIX(cd), cd);
+					update();
+					return;
+				}
+				vector<int> v;
+				m_bd.canPushBackList(v, cd);
+				if( !v.empty() ) {
+					m_mvCard = cd;
+					m_bd.popFrom('F'+clmn);
+					m_bd.putTo('0'+v.front(), cd);
+					update();
+					return;
+				}
+			} else {
+				//	undone:
+			}
 			return;
 		}
 		auto& lst = m_bd.getColumn(clmn);
