@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui.setupUi(this);
 	QObject::connect(ui.action_New, SIGNAL(triggered()), this, SLOT(onNewGame()));
+	QObject::connect(ui.action_eXit, SIGNAL(triggered()), this, SLOT(onExit()));
 	//
 	setFixedSize(600, 600*1.6);
 	m_fcw = new FreeCellWidget();
@@ -18,4 +19,5 @@ void MainWindow::onNewGame()
 }
 void MainWindow::onExit()
 {
+	close();
 }

@@ -110,5 +110,15 @@
 ◎ C 03/27 03/27 0.001 ToDo Game > New メニュー追加
 ◎ C 03/27 03/27 0.001 ToDo New に リサイクルアイコン設置
 ● C 03/27             ToDo ツールバーでMSフリーセル番号を入力可能に
+◎ C 03/27 03/27 0.001 ToDo Game > eXit メニュー追加
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
+● C 03/27             ToDo 
 ● C 03/27             ToDo 
 ● C 03/27             ToDo 
