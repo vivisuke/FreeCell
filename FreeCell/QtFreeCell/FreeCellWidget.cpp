@@ -10,6 +10,7 @@
 FreeCellWidget::FreeCellWidget(QWidget *parent)
 	: QWidget(parent)
 {
+	m_mvCard = 0;
 	m_imgCard.load("Resources/card.png");
 	m_rctCard = QRect(0, 0, m_imgCard.width(), m_imgCard.height());
 	m_rctCard1 = QRect(0, 0, m_imgCard.width()/8, m_imgCard.height()/7);
@@ -147,12 +148,17 @@ void FreeCellWidget::mouseReleaseEvent(QMouseEvent* event)
 		row = std::min(row, (int)lst.size()-1);
 		card_t cd = lst[row];
 		if( m_bd.canMoveToHome(cd) ) {
+			m_mvCard = cd;
+			m_bd.popFrom('0'+clmn);
+			m_bd.putTo('A'+cardColIX(cd), cd);
+			update();
 			return;
 		}
 	}
 }
 void FreeCellWidget::newGame()
 {
+	m_mvCard = 0;
 	m_bd.init();
 	update();
 }

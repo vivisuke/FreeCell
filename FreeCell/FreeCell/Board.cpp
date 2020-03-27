@@ -232,6 +232,48 @@ std::string Board::hkeyText() const			//	ハッシュキーテキスト
 	}
 	return txt;
 }
+card_t Board::popFrom(char pos)
+{
+	if( pos >= 'F' && pos <= 'I' ) {		//	フリーセルから
+		int ix = pos - 'F';
+		auto cd = m_freeCell[ix];
+		if( cd != 0 ) {
+			--m_nCardFreeCell;
+			while( (m_freeCell[ix] = m_freeCell[ix+1]) != 0 ) ++ix;
+		}
+		return cd;
+	}
+	if( pos >= '0' && pos <= '7' ) {		//	カラムから
+		int ix = pos - '0';
+		auto& lst = m_column[ix];
+		if( !lst.empty() ) {
+			auto cd = lst.back();
+			lst.pop_back();
+			return cd;
+		}
+	}
+	return 0;
+}
+void Board::putTo(char pos, card_t cd)
+{
+	if( pos >= 'A' && pos <= 'D' ) {		//	ホームセルへ
+		int ix = cardColIX(cd);
+		m_home[ix] += 1;
+		return;
+	}
+	if( pos >= 'F' && pos <= 'I' ) {		//	フリーセルへ
+		int ix = pos - 'F';
+		if( m_freeCell[ix] != 0 ) {
+			int i = m_nCardFreeCell + 1;
+			while( --i > ix ) {
+				m_freeCell[i] = m_freeCell[i-1];
+			}
+		}
+		m_freeCell[ix] = cd;
+		++m_nCardFreeCell;
+		return;
+	}
+}
 void Board::set(const std::string& txt)
 {
 	memcpy(&m_freeCell[0], (cchar*)&txt[0], N_FREECELL);		//	フリーセル状態

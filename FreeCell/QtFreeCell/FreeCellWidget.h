@@ -29,6 +29,7 @@ private:
 	qreal			m_dy;				//	カードｙ座標差分
 	int			m_pressedClmn;
 	int			m_pressedRow;
+	card_t		m_mvCard;		//	移動中カード
 	QImage		m_imgCard;		//	カード全体画像
 	QRect		m_rctCard;			//	カード全体画像サイズ
 	QRect		m_rctCard1;		//	カード1枚画像サイズ
