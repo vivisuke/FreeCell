@@ -80,6 +80,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\FreeCell\Board.cpp" />
+    <ClCompile Include="..\FreeCell\utils.cpp" />
     <ClCompile Include="FreeCellWidget.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
@@ -95,6 +97,10 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="FreeCellWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\FreeCell\Board.h" />
+    <ClInclude Include="..\FreeCell\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
