@@ -1,4 +1,6 @@
 ﻿#include <QPainter>
+#include <QMouseEvent>
+#include <QDebug>
 //#include "../FreeCell/Board.h"
 #include "FreeCellWidget.h"
 
@@ -61,12 +63,9 @@ void FreeCellWidget::paintEvent(QPaintEvent*event)
 	auto rct = rect();
 	m_cdWidth = rct.width() / 8;			//	画面でのカード表示幅
 	m_cdHeight = m_cdWidth * 90 / 60;		//	画面でのカード表示高
+	m_columnY0 = m_cdHeight + m_cdWidth/2;		//	カラムカード表示位置
+	m_dy = m_cdWidth / 2.5;
 	//
-#if	0
-	pt.setPen(Qt::black);
-	pt.drawLine(0, 0, rct.width(), rct.height());
-	pt.drawLine(rct.width(), 0, 0, rct.height());
-#endif
 	pt.setBrush(QColor("darkgreen"));		//	背景色
 	pt.drawRect(rct);
 	//	フリーセル・ホームセル枠
@@ -87,81 +86,45 @@ void FreeCellWidget::paintEvent(QPaintEvent*event)
 	}
 	//	カラムのカード表示
 	px = 0;
-	auto dy = m_cdWidth / 2.5;
+	//auto dy = m_cdWidth / 2.5;
 	for (int cix = 0; cix < N_COLUMN; ++cix, px+=m_cdWidth) {
-		auto py = m_cdHeight + m_cdWidth/2;		//	カラムカード表示位置
+		auto py = m_columnY0;						//	カラムカード表示位置
 		auto& lst = m_bd.getColumn(cix);
-		for (int i = 0; i != lst.size(); ++i, py+=dy) {
+		for (int i = 0; i != lst.size(); ++i, py+=m_dy) {
 			drawCard(pt, px, py, lst[i]);
 		}
 	}
-#if	0
-	auto py0 = cdHeight + cdWidth/2;		//	カラムカード表示位置
-	auto dy = cdWidth / 2.5;
-	pt.setFont(QFont("Arial", 20));
-	pt.setPen(Qt::black);
-	pt.setBrush(Qt::white);
-	for (int i = 0; i < N_CARD; ++i) {
-		px = (i % 8) * cdWidth;
-		py = py0 + (i / 8)*dy;
-		auto rct2 = QRect(px, py, cdWidth, cdHeight);	//	表示位置
-		pt.setPen(Qt::black);
-		pt.drawRoundedRect(rct2, cdWidth/10, cdWidth/10);
-		int n = (i/4) + 1;
-		pt.setPen( (i % 4) < 2 ? Qt::black : Qt::red);
-		auto r = QRect(px+4, py, cdWidth, cdHeight);
-		QString txt;
-		switch( n ) {
-		case 1:	txt = "A";	break;
-		case 11:	txt = "J";	break;
-		case 12:	txt = "Q";	break;
-		case 13:	txt = "K";	break;
-		default:		txt = QString::number(n);	break;
-		}
-#if	0
-		int st = i % 4;
-		switch( st ) {
-		case 0:	txt += QChar(0x2092);	break;
-		//case 0:	txt += QString::fromUtf8("♣");	break;
-		case 1:	txt += QChar(0x25c6);	break;
-		//case 1:	txt += "◆";	break;
-		case 2:	txt += "♥";	break;
-		case 3:	txt += "♠";	break;
-		}
-#endif
-		pt.drawText(r, Qt::AlignLeft|Qt::AlignTop, txt);
-		auto rst = QRect(px+cdWidth-dy, py, dy, dy);
-		QImage *ptr = nullptr;
-		switch( i % 4 ) {
-		case 0:	ptr = &m_imgSpade;	break;
-		case 1:	ptr = &m_imgClub;	break;
-		case 2:	ptr = &m_imgHeart;	break;
-		case 3:	ptr = &m_imgDiamond;	break;
-		}
-		pt.drawImage(rst, *ptr, QRect(0, 0, SUIT_WIDTH, SUIT_HEIGHT));
-		//	中央にもスート表示
-		auto r2 = QRect(px, py+(cdHeight-cdWidth)/2+dy/2, cdWidth, cdWidth);
-		pt.drawImage(r2, *ptr, QRect(0, 0, SUIT_WIDTH, SUIT_HEIGHT));
+}
+//	false for 非カード位置、-1 for フリーセル・ホームセル
+bool FreeCellWidget::xyToColumnRow(qreal x, qreal y, int& clm, int& row)
+{
+	clm = floor(x / m_cdWidth);
+	if( y < m_cdHeight ) {
+		row = -1;
+		return true;
 	}
-#endif
-#if	0
-	for (int i = 0; i < N_CARD; ++i) {
-		px = (i % 8) * cdWidth;
-		py = py0 + (i / 8)*dy;
-		auto rct2 = QRect(px, py, cdWidth, cdHeight);	//	表示位置
-		auto cdx = (i % 8) * m_rctCard1.width();
-		auto cdy = (i/8) * m_rctCard1.height();
-		auto srcr = QRect(cdx, cdy, m_rctCard1.width(), m_rctCard1.height());
-		pt.drawImage(rct2, m_imgCard, srcr);
+	if( y < m_columnY0 ) return -1;
+	row = floor((y - m_columnY0) / m_dy);
+	return true;
+}
+void FreeCellWidget::mousePressEvent(QMouseEvent*event)
+{
+	auto x = event->x();
+	auto y = event->y();
+	qDebug() << "mousePressEvent(" << x << ", " << y << ")";
+	int clm, row;
+	if( xyToColumnRow(event->x(), event->y(), clm, row) ) {
+		qDebug() << "clm = " << clm << ", " << row << "\n";
+	} else {
 	}
-#endif
-#if	0
-	px = 0;
-	py = cdHeight + cdWidth/2;
-	auto rct2 = QRect(px, py, cdWidth, cdHeight);
-	//rct.setHeight(rct.width() * m_rctCard.height() / m_rctCard.width());
-	pt.drawImage(rct2, m_imgCard, m_rctCard1);
-#endif
+}
+void FreeCellWidget::mouseMoveEvent(QMouseEvent*)
+{
+	qDebug() << "mouseMoveEvent()";
+}
+void FreeCellWidget::mouseReleaseEvent(QMouseEvent*)
+{
+	qDebug() << "mouseReleaseEvent()";
 }
 void FreeCellWidget::newGame()
 {
