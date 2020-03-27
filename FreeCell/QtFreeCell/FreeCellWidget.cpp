@@ -4,6 +4,8 @@
 #include "../FreeCell/Board.h"
 #include "FreeCellWidget.h"
 
+using namespace std;
+
 #define		SUIT_WIDTH			540
 #define		SUIT_HEIGHT			540
 
@@ -165,6 +167,15 @@ void FreeCellWidget::mouseReleaseEvent(QMouseEvent* event)
 			m_mvCard = cd;
 			m_bd.popFrom('0'+clmn);
 			m_bd.putTo('A'+cardColIX(cd), cd);
+			update();
+			return;
+		}
+		vector<int> v;
+		m_bd.canPushBackList(v, cd);
+		if( !v.empty() ) {
+			m_mvCard = cd;
+			m_bd.popFrom('0'+clmn);
+			m_bd.putTo('0'+v.front(), cd);
 			update();
 			return;
 		}

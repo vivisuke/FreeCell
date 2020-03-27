@@ -285,6 +285,10 @@ void Board::putTo(char pos, card_t cd)
 		++m_nCardFreeCell;
 		return;
 	}
+	if( pos >= '0' && pos <= '7' ) {
+		m_column[pos - '0'].push_back(cd);
+		return;
+	}
 }
 void Board::set(const std::string& txt)
 {
@@ -539,6 +543,16 @@ bool Board::canMoveTo(char pos, card_t cd) const
 		return canPushBack(lst.back(), cd);
 	}
 	return false;
+}
+//	指定カードを追加可能なカラム番号リスト生成
+void Board::canPushBackList(std::vector<int>& v, card_t cd) const
+{
+	v.clear();
+	for (int i = 0; i < N_COLUMN; ++i) {
+		const auto& lst = m_column[i];
+		if( lst.empty() || canPushBack(lst.back(), cd) )
+			v.push_back(i);
+	}
 }
 bool Board::isSafeToHome(card_t cd) const		//	カードを安全にホーム移動できるか？
 {

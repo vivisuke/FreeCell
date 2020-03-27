@@ -76,6 +76,7 @@ public:
 	card_t	getAt(char pos) const;
 	bool	canMoveToHome(card_t) const;
 	bool	canMoveTo(char pos, card_t) const;
+	void	canPushBackList(std::vector<int>&, card_t cd) const;		//	指定カードを追加可能なカラム番号リスト生成
 	void	genMoves(Moves&) const;		//	可能着手生成
 	void	genMoves1(Moves& /*, bool=true*/) const;		//	１枚のみ移動する可能着手生成
 	bool	genSafeMove(Move&) const;		//	安全にホーム移動できる着手生成
