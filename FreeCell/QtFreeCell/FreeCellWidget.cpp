@@ -1,7 +1,7 @@
 ﻿#include <QPainter>
 #include <QMouseEvent>
 #include <QDebug>
-//#include "../FreeCell/Board.h"
+#include "../FreeCell/Board.h"
 #include "FreeCellWidget.h"
 
 #define		SUIT_WIDTH			540
@@ -96,14 +96,17 @@ void FreeCellWidget::paintEvent(QPaintEvent*event)
 	}
 }
 //	false for 非カード位置、-1 for フリーセル・ホームセル
-bool FreeCellWidget::xyToColumnRow(qreal x, qreal y, int& clm, int& row)
+bool FreeCellWidget::xyToColumnRow(qreal x, qreal y, int& clmn, int& row)
 {
-	clm = floor(x / m_cdWidth);
+	clmn = floor(x / m_cdWidth);
 	if( y < m_cdHeight ) {
-		row = -1;
+		row = -1;		//	フリーセル・ホームセル
 		return true;
 	}
-	if( y < m_columnY0 ) return -1;
+	if( y < m_columnY0 ) {
+		clmn = -1;
+		return false;
+	}
 	row = floor((y - m_columnY0) / m_dy);
 	return true;
 }
@@ -112,19 +115,41 @@ void FreeCellWidget::mousePressEvent(QMouseEvent*event)
 	auto x = event->x();
 	auto y = event->y();
 	qDebug() << "mousePressEvent(" << x << ", " << y << ")";
-	int clm, row;
-	if( xyToColumnRow(event->x(), event->y(), clm, row) ) {
-		qDebug() << "clm = " << clm << ", " << row << "\n";
+	int clmn, row;
+	if( xyToColumnRow(event->x(), event->y(), clmn, row) ) {
+		qDebug() << "clmn = " << clmn << ", " << row << "\n";
+		m_pressedClmn = clmn;
+		m_pressedRow = row;
 	} else {
+		m_pressedClmn = -1;
 	}
 }
-void FreeCellWidget::mouseMoveEvent(QMouseEvent*)
+void FreeCellWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	qDebug() << "mouseMoveEvent()";
 }
-void FreeCellWidget::mouseReleaseEvent(QMouseEvent*)
+void FreeCellWidget::mouseReleaseEvent(QMouseEvent* event)
 {
-	qDebug() << "mouseReleaseEvent()";
+	auto x = event->x();
+	auto y = event->y();
+	qDebug() << "mouseReleaseEvent(" << x << ", " << y << ")";
+	int clmn, row;
+	if( !xyToColumnRow(event->x(), event->y(), clmn, row) ) {
+		return;
+	}
+	if( clmn == m_pressedClmn && row == m_pressedRow ) {		//	タップ
+		if( row < 0 ) {		//	フリーセル・ホームセルの場合
+			//	undone:
+			return;
+		}
+		auto& lst = m_bd.getColumn(clmn);
+		if( lst.empty() ) return;
+		row = std::min(row, (int)lst.size()-1);
+		card_t cd = lst[row];
+		if( m_bd.canMoveToHome(cd) ) {
+			return;
+		}
+	}
 }
 void FreeCellWidget::newGame()
 {

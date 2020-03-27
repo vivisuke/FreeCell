@@ -467,6 +467,12 @@ void Board::genMoves(Moves& mvs) const		//	可能着手生成
 		}
 	}
 }
+bool Board::canMoveToHome(card_t cd) const		//	カードをホーム移動できるか？
+{
+	int num = (int)cardNum(cd);
+	auto ix = cardColIX(cd);
+	return m_home[ix] == num - 1;
+}
 bool Board::isSafeToHome(card_t cd) const		//	カードを安全にホーム移動できるか？
 {
 	int num = (int)cardNum(cd);

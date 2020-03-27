@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include "MainWindow.h"
 #include "FreeCellWidget.h"
 
@@ -19,5 +20,13 @@ void MainWindow::onNewGame()
 }
 void MainWindow::onExit()
 {
-	close();
+	QMessageBox dlg;
+	dlg.setWindowTitle("QtFreeCell");
+	dlg.setText("Are you sure to Exit ?");
+	dlg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	dlg.setDefaultButton(QMessageBox::Yes);
+	dlg.setIcon(QMessageBox::Warning);
+	auto res = dlg.exec();
+	if( res == QMessageBox::Yes )
+		close();
 }

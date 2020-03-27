@@ -27,6 +27,8 @@ private:
 	qreal			m_cdHeight;		//	画面上でのカード表示高;
 	qreal			m_columnY0;		//	カラム表示位置
 	qreal			m_dy;				//	カードｙ座標差分
+	int			m_pressedClmn;
+	int			m_pressedRow;
 	QImage		m_imgCard;		//	カード全体画像
 	QRect		m_rctCard;			//	カード全体画像サイズ
 	QRect		m_rctCard1;		//	カード1枚画像サイズ
