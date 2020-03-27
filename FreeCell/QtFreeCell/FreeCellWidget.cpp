@@ -20,6 +20,9 @@ FreeCellWidget::FreeCellWidget(QWidget *parent)
 	m_imgClub.load("Resources/club.png");
 	m_imgHeart.load("Resources/heart.png");
 	m_imgDiamond.load("Resources/diamond.png");
+	//
+	m_initHKey = m_bd.hkeyText();
+	m_undoIX = 0;
 }
 void FreeCellWidget::drawCard(QPainter& pt, qreal px, qreal py, card_t cd)		//	左上点 (px, py) にカードを描画
 {
@@ -155,62 +158,71 @@ void FreeCellWidget::mouseReleaseEvent(QMouseEvent* event)
 		return;
 	}
 	if( clmn == m_pressedClmn && row == m_pressedRow ) {		//	タップ
-		if( row < 0 ) {		//	フリーセル・ホームセルの場合
-			if( clmn < N_FREECELL ) {		//	フリーセルの場合
-				card_t cd = m_bd.getAt('F'+clmn);
-				if( m_bd.canMoveToHome(cd) ) {
-					m_mvCard = cd;
-					m_bd.popFrom('F'+clmn);
-					m_bd.putTo('A'+cardColIX(cd), cd);
-					update();
-					return;
-				}
+		onTapped(clmn, row);
+	}
+}
+void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル・ホームセル
+{
+	char src = 0, dst = 0;
+	card_t cd = 0;
+	if( row < 0 ) {		//	フリーセル・ホームセルの場合
+		if( clmn < N_FREECELL ) {		//	フリーセルの場合
+			src = 'F'+clmn;
+			cd = m_bd.getAt(src);
+			if( m_bd.canMoveToHome(cd) ) {
+				dst = 'A'+cardColIX(cd);
+			} else {
 				vector<int> v;
 				m_bd.canPushBackList(v, cd);
 				if( !v.empty() ) {
-					m_mvCard = cd;
-					m_bd.popFrom('F'+clmn);
-					m_bd.putTo('0'+v.front(), cd);
-					update();
-					return;
+					dst = '0'+ v.back();
+				} else {
+					//	undone:
 				}
-			} else {
-				//	undone:
 			}
-			return;
 		}
+	} else {		//	カラムの場合
 		auto& lst = m_bd.getColumn(clmn);
 		if( lst.empty() ) return;
 		row = std::min(row, (int)lst.size()-1);
-		card_t cd = lst[row];
+		if( row < lst.size() - 1 ) {		//	列の途中がタップされた場合
+			return;
+		}
+		cd = lst[row];
+		src = '0'+clmn;
 		if( m_bd.canMoveToHome(cd) ) {
-			m_mvCard = cd;
-			m_bd.popFrom('0'+clmn);
-			m_bd.putTo('A'+cardColIX(cd), cd);
-			update();
-			return;
+			dst = 'A'+cardColIX(cd);
+		} else {
+			vector<int> v;
+			m_bd.canPushBackList(v, cd);
+			if( !v.empty() ) {
+				dst = '0'+v.front();
+			} else if( m_bd.canMoveTo('F', cd) ) {
+				dst = 'F'+m_bd.nCardFreeCell();
+			}
 		}
-		vector<int> v;
-		m_bd.canPushBackList(v, cd);
-		if( !v.empty() ) {
-			m_mvCard = cd;
-			m_bd.popFrom('0'+clmn);
-			m_bd.putTo('0'+v.front(), cd);
-			update();
-			return;
-		}
-		if( m_bd.canMoveTo('F', cd) ) {
-			m_mvCard = cd;
-			m_bd.popFrom('0'+clmn);
-			m_bd.putTo('F'+m_bd.nCardFreeCell(), cd);
-			update();
-			return;
-		}
+	}
+	if( dst != 0 ) {
+		m_mvCard = cd;
+		m_bd.popFrom(src);
+		m_bd.putTo(dst, cd);
+		update();
+		return;
 	}
 }
 void FreeCellWidget::newGame()
 {
 	m_mvCard = 0;
 	m_bd.init();
+	m_initHKey = m_bd.hkeyText();
+	m_undoIX = 0;
 	update();
+}
+void FreeCellWidget::doUndo()
+{
+	if( m_undoIX == 0 ) return;
+}
+void FreeCellWidget::doRedo()
+{
+	if( m_undoIX == m_mvHist.size() ) return;
 }

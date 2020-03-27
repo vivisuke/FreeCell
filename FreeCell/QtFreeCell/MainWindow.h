@@ -12,6 +12,8 @@ public:
 
 public slots:
 	void	onNewGame();
+	void	onUndo();
+	void	onRedo();
 	void	onExit();
 
 private:
