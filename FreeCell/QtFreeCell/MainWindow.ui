@@ -45,11 +45,19 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_New">
+   <property name="icon">
+    <iconset resource="MainWindow.qrc">
+     <normaloff>:/MainWindow/Resources/renew_black.png</normaloff>:/MainWindow/Resources/renew_black.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;New</string>
    </property>
   </action>
   <action name="action_eXit">
+   <property name="icon">
+    <iconset resource="MainWindow.qrc">
+     <normaloff>:/MainWindow/Resources/exit_black.png</normaloff>:/MainWindow/Resources/exit_black.png</iconset>
+   </property>
    <property name="text">
     <string>e&amp;Xit</string>
    </property>

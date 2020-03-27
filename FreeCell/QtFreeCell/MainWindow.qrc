@@ -5,5 +5,7 @@
         <file>Resources/diamond.png</file>
         <file>Resources/heart.png</file>
         <file>Resources/spade.png</file>
+        <file>Resources/renew_black.png</file>
+        <file>Resources/exit_black.png</file>
     </qresource>
 </RCC>
