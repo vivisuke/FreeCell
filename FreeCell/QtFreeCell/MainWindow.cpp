@@ -5,8 +5,17 @@ MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+	QObject::connect(ui.action_New, SIGNAL(triggered()), this, SLOT(onNewGame()));
+	//
 	setFixedSize(600, 600*1.6);
-	auto fc = new FreeCellWidget();
-	setCentralWidget(fc);
+	m_fcw = new FreeCellWidget();
+	setCentralWidget(m_fcw);
 	setWindowTitle("QtFreeCell");
+}
+void MainWindow::onNewGame()
+{
+	m_fcw->newGame();
+}
+void MainWindow::onExit()
+{
 }

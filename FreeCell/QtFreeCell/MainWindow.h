@@ -10,6 +10,11 @@ class MainWindow : public QMainWindow
 public:
 	MainWindow(QWidget *parent = Q_NULLPTR);
 
+public slots:
+	void	onNewGame();
+	void	onExit();
+
 private:
 	Ui::MainWindowClass ui;
+	class FreeCellWidget	*m_fcw;
 };

@@ -163,3 +163,8 @@ void FreeCellWidget::paintEvent(QPaintEvent*event)
 	pt.drawImage(rct2, m_imgCard, m_rctCard1);
 #endif
 }
+void FreeCellWidget::newGame()
+{
+	m_bd.init();
+	update();
+}

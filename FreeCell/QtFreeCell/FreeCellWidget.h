@@ -9,6 +9,8 @@ class FreeCellWidget : public QWidget
 
 public:
 	FreeCellWidget(QWidget *parent = Q_NULLPTR);
+	
+	void	newGame();
 
 protected:
 	void	paintEvent(QPaintEvent*);
