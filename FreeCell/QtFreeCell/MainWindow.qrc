@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/MainWindow">
         <file>Resources/card.png</file>
+        <file>Resources/club.png</file>
+        <file>Resources/diamond.png</file>
+        <file>Resources/heart.png</file>
+        <file>Resources/spade.png</file>
     </qresource>
 </RCC>

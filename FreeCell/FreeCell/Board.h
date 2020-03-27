@@ -73,6 +73,7 @@ public:
 	void	genMoves1(Moves& /*, bool=true*/) const;		//	１枚のみ移動する可能着手生成
 	bool	genSafeMove(Move&) const;		//	安全にホーム移動できる着手生成
 	bool	isSafeToHome(card_t) const;		//	カードを安全にホーム移動できるか？
+	const std::vector<card_t>	getColumn(int ix) const { return m_column[ix]; }
 public:
 	void	init0();		//	初期化
 	void	init();			//	初期化・カードを配る
