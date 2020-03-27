@@ -26,6 +26,10 @@ typedef const char cchar;
 typedef unsigned char uint8;
 typedef unsigned char card_t;
 
+uint8 cardNum(card_t c);
+uint8 cardCol(card_t c);
+uint8 cardColIX(card_t c);
+
 //	位置：
 //		ゴール：			'G'
 //		フリーセル：	移動先の場合：'F'、移動元の場合： 'A'～'D'
