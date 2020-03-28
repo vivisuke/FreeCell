@@ -198,7 +198,9 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 					m_bd.canPushBackList(v, cd, true);		//	空欄への移動可
 					if( v.empty() )
 						return;
+					qDebug() << "toEmpty";
 				}
+				src = '0' + clmn;
 				dst = '0'+v.front();
 			}
 		} else {		//	列の末尾がタップされた場合
