@@ -405,11 +405,12 @@ void Board::genMoves1(Moves& mvs /*, bool bTrue*/) const		//	１枚のみ移動�
 				mvs.emplace_back('0'+s, 'F'+m_nCardFreeCell);			//	フリーセルへの移動
 			}
 			card_t sc = m_column[s].back();		//	末尾カード
-			//	別の列末尾への移動
+			//	別の列末尾への移動、ただし１枚を空列への移動手は生成しない
 			for (int d = 0; d != N_COLUMN; ++d) {
 				if( s != d ) {
 					if( m_column[d].empty() ) {
-						mvs.emplace_back('0'+s, '0'+d);			//	i から d への移動
+						if( m_column[s].size() != 1 )	//	１枚を空列への移動手は生成しない
+							mvs.emplace_back('0'+s, '0'+d);			//	i から d への移動
 					} else if( canPushBack(m_column[d].back(), sc) )
 						mvs.emplace_back('0'+s, '0'+d);			//	i から d への移動
 				}
