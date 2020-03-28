@@ -165,6 +165,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 {
 	char src = 0, dst = 0;
 	card_t cd = 0;
+	int n = 1;
 	if( row < 0 ) {		//	フリーセル・ホームセルの場合
 		if( clmn < N_FREECELL ) {		//	フリーセルの場合
 			src = 'F'+clmn;
@@ -186,7 +187,17 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 		if( lst.empty() ) return;
 		row = std::min(row, (int)lst.size()-1);
 		if( row < lst.size() - 1 ) {		//	列の途中がタップされた場合
-			return;
+			if( !m_bd.isDescSeq(clmn, row) )
+				return;
+			n = lst.size() - row;
+			cd = lst[row];
+			if( n <= m_bd.nMobableDesc() ) {
+				vector<int> v;
+				m_bd.canPushBackList(v, cd);
+				if( v.empty() )
+					return;
+				dst = '0'+v.front();
+			}
 		}
 		cd = lst[row];
 		src = '0'+clmn;
@@ -203,12 +214,27 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 		}
 	}
 	if( dst != 0 ) {
-		m_mvHist.push_back(Move(src, dst));
+		Move mv(src, dst, n);
+		m_mvHist.push_back(mv);
 		m_undoIX = m_mvHist.size();
 		//
 		m_mvCard = cd;
-		m_bd.popFrom(src);
-		m_bd.putTo(dst, cd);
+		m_bd.doMove(mv);
+#if	0
+		if( n == 1 ) {
+			m_bd.popFrom(src);
+			m_bd.putTo(dst, cd);
+		} else {
+			vector<card_t> v;
+			auto& lst = m_bd.getColumn(clmn);
+			for (int i = lst.size(); --i >= row; )
+				v.push_back(lst[i]);
+			for(auto cd: v) {
+				m_bd.popFrom(src);
+				m_bd.putTo(dst, cd);
+			}
+		}
+#endif
 		update();
 		return;
 	}
@@ -221,6 +247,10 @@ void FreeCellWidget::newGame()
 	m_undoIX = 0;
 	update();
 }
+bool FreeCellWidget::canUndo()
+{
+	return m_undoIX != 0;
+}
 void FreeCellWidget::doUndo()
 {
 	if( m_undoIX == 0 ) return;
@@ -228,10 +258,17 @@ void FreeCellWidget::doUndo()
 	m_bd.unMove(mv);
 	update();
 }
+bool FreeCellWidget::canRedo()
+{
+	return m_undoIX < m_mvHist.size();
+}
 void FreeCellWidget::doRedo()
 {
 	if( m_undoIX == m_mvHist.size() ) return;
 	auto mv = m_mvHist[m_undoIX++];
 	m_bd.doMove(mv);
 	update();
+}
+void FreeCellWidget::nextHint()
+{
 }

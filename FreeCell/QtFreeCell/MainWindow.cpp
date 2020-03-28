@@ -13,8 +13,10 @@ MainWindow::MainWindow(QWidget *parent)
 	setWindowTitle("QtFreeCell");
 	//
 	QObject::connect(ui.action_New, SIGNAL(triggered()), this, SLOT(onNewGame()));
+	QObject::connect(ui.action_NextHint, SIGNAL(triggered()), m_fcw, SLOT(nextHint()));
 #if	1
 	QObject::connect(ui.action_Undo, SIGNAL(triggered()), m_fcw, SLOT(doUndo()));
+	//QObject::connect(ui.action_Undo, SIGNAL(aboutToShow()), m_fcw, SLOT(canUndo()));
 	QObject::connect(ui.action_Redo, SIGNAL(triggered()), m_fcw, SLOT(doRedo()));
 #else
 	QObject::connect(ui.action_Undo, SIGNAL(triggered()), this, SLOT(onUndo()));

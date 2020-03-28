@@ -313,6 +313,18 @@ int Board::nEmptyColumns() const			//	空欄カラム数を返す
 		if( lst.empty() ) ++n;
 	return n;
 }
+bool Board::isDescSeq(int clmn, int row) const		//	clmn の row から末尾までは降順列か？
+{
+	const auto& lst = m_column[clmn];
+	if( lst.empty() || row >= lst.size() )
+		return false;
+	while( row < lst.size() - 1 ) {
+		if( !canPushBack(lst[row], lst[row+1]) )
+			return false;
+		++row;
+	}
+	return true;
+}
 int Board::nMobableDesc() const			//	移動可能降順列数を返す
 {
 	return (nEmptyColumns() + 1) * (N_FREECELL + 1 - m_nCardFreeCell);

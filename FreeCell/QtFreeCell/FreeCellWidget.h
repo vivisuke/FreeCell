@@ -16,6 +16,9 @@ public:
 public slots:
 	void	doUndo();
 	void	doRedo();
+	bool	canUndo();
+	bool	canRedo();
+	void	nextHint();
 
 protected:
 	void	paintEvent(QPaintEvent*);

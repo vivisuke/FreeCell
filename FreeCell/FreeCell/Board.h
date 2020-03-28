@@ -68,6 +68,7 @@ public:
 	bool	checkNCard() const;				//	カード数チェック
 	int	nCardHome() const;
 	int	nCardFreeCell() const { return m_nCardFreeCell; }
+	bool	isDescSeq(int clmn, int row) const;		//	clmn の row から末尾までは降順列か？
 	int	nEmptyColumns() const;			//	空欄カラム数を返す
 	int	nMobableDesc() const;			//	移動可能降順列数を返す
 	int	nMobableDescToEmpty() const;	//	空列への移動可能降順列数を返す

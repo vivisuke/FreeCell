@@ -9,5 +9,7 @@
         <file>Resources/exit_black.png</file>
         <file>Resources/undo_black.png</file>
         <file>Resources/redo_black.png</file>
+        <file>Resources/next_hint.png</file>
+        <file>Resources/question.png</file>
     </qresource>
 </RCC>

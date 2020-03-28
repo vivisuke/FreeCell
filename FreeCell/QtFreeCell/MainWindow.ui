@@ -34,7 +34,14 @@
     <addaction name="separator"/>
     <addaction name="action_eXit"/>
    </widget>
+   <widget class="QMenu" name="menu_Solver">
+    <property name="title">
+     <string>&amp;Solver</string>
+    </property>
+    <addaction name="action_NextHint"/>
+   </widget>
    <addaction name="menu_Game"/>
+   <addaction name="menu_Solver"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -44,6 +51,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_New"/>
+   <addaction name="action_NextHint"/>
+   <addaction name="separator"/>
    <addaction name="action_Undo"/>
    <addaction name="action_Redo"/>
    <addaction name="separator"/>
@@ -84,6 +93,15 @@
    </property>
    <property name="text">
     <string>&amp;Redo</string>
+   </property>
+  </action>
+  <action name="action_NextHint">
+   <property name="icon">
+    <iconset resource="MainWindow.qrc">
+     <normaloff>:/MainWindow/Resources/question.png</normaloff>:/MainWindow/Resources/question.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;NextHint</string>
    </property>
   </action>
  </widget>
