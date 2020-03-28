@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <random>
 #include <algorithm>
+#include <unordered_map>
 #include <assert.h>
 #include "Board.h"
 #include "utils.h"
@@ -15,6 +16,8 @@ mt19937 g_mt(g_rd());
 mt19937 g_mt(0);
 #endif
 #endif
+
+static unordered_map<string, Move> g_map;
 
 uint8 cardNum(card_t c) { return c&NUM_MASK; }
 uint8 cardCol(card_t c) { return c&COL_MASK; }
@@ -608,6 +611,67 @@ bool Board::genSafeMove(Move& mv) const				//	安全にホーム移動できる�
 		}
 	}
 	return false;
+}
+void Board::genOpenClmnMoves(Moves& mvs, int depth) const		//	列を空ける着手を生成
+{
+	mvs.clear();
+	if( nEmptyColumns() != 0 ) return;		//	既に空列がある
+	Board bd(*this);
+	auto hktxt = bd.hkeyText();
+	int mxnm = 0;		//	最大移動可能降順列数
+	string mxnmhk;		//	最大移動可能降順列数を与える局面ハッシュテキスト
+	string openhk;		//	カラムが空いて、空きフリーセルが１以上の局面ハッシュテキスト
+	g_map.clear();
+	g_map[hktxt] = Move(0,0);
+	vector<string> lst, lst2;
+	lst.push_back(hktxt);
+	for (int n = 1; n <= depth; ++n) {		//	手数
+		lst2.clear();	//	末端ノード
+		for(const auto& txt: lst) {
+			bd.set(txt);
+			assert(bd.checkNCard());
+			Moves mvs;
+			bd.genMoves(mvs);
+			for(const auto& mv: mvs) {
+				bd.doMove(mv);
+				if( !bd.checkNCard() )
+					cout << bd.text() << "\n";
+				assert( bd.checkNCard() );
+				auto hk = bd.hkeyText();
+				if( g_map.find(hk) == g_map.end() ) {
+					auto nm = bd.nMobableDesc();
+					if( nm > mxnm ) {
+						mxnmhk = bd.hkeyText();
+						mxnm = nm;
+						if( mxnm > 5 )
+							cout << "nm = " << mxnm << "\n" << bd.text() << "\n";
+					} else if( bd.nEmptyColumns() != 0 && bd.nCardFreeCell() == 1 ) {
+						openhk = bd.hkeyText();
+					}
+					g_map[hk] = mv;
+					lst2.push_back(hk);
+				}
+				bd.unMove(mv);
+				assert( bd.checkNCard() );
+			}
+		}
+		lst.swap(lst2);		//	末端ノードリストを lst に転送
+		cout << n << ": lst.size() = " << lst.size() << ", mxnm = " << mxnm << "\n";
+		//if( mxnm > 5 ) break;
+	}
+    //	手順取得
+    if( mxnm == 5 && !openhk.empty() )
+    	mxnmhk = openhk;
+    string hk = mxnmhk;
+	bd.set(hk);
+	//Moves mvs;
+    for (;;) {
+    	Move mv = g_map[hk];
+	    if( mv == Move(0,0) ) break;
+	    mvs.insert(mvs.begin(), mv);		//	手数は少ないのでおｋ？
+	    bd.unMove(mv);
+		hk = bd.hkeyText();
+    }
 }
 void Board::doMove(const Move& mv)
 {

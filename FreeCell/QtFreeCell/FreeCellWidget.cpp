@@ -280,4 +280,12 @@ void FreeCellWidget::doRedo()
 }
 void FreeCellWidget::nextHint()
 {
+	Moves mvs;
+	m_bd.genOpenClmnMoves(mvs, 10);
+	qDebug() << "mvs.size() = " << mvs.size();
+	if( mvs.empty() ) return;
+	m_mvHist.push_back(mvs.front());
+	m_undoIX = m_mvHist.size();
+	m_bd.doMove(mvs.front());
+	update();
 }
