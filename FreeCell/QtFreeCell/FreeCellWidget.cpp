@@ -9,11 +9,32 @@ using namespace std;
 
 #define		SUIT_WIDTH			540
 #define		SUIT_HEIGHT			540
+#define		MOVE_COUNT		15
 
+//----------------------------------------------------------------------
+//	フリーセル（'F'～'I'）、ホームセル（'A'～'D'）、カラムベース位置（'0'～'7'）の左上点座標を返す
+Vec2 FreeCellWidget::posToVec2(char pos, int row) const
+{
+	if( pos >= 'F' && pos <= 'I' )
+		return Vec2(m_cdWidth*(pos-'F'), 0);
+	if( pos >= 'A' && pos <= 'D' )
+		return Vec2(m_cdWidth*(pos-'A'+4), 0);
+	if( pos >= '0' && pos <= '7' )
+		return Vec2(m_cdWidth*(pos-'0'), m_columnY0 + row * m_dy);
+	return Vec2(0, 0);
+}
+bool FreeCellWidget::isMoving(card_t cd) const
+{
+	for(const auto& mvc: m_mvCard) {
+		if( mvc.m_card == cd ) return true;
+	}
+	return false;
+}
+//----------------------------------------------------------------------
 FreeCellWidget::FreeCellWidget(QWidget *parent)
 	: QWidget(parent)
 {
-	m_mvCard = 0;
+	//m_mvCard = 0;
 	m_imgCard.load("Resources/card.png");
 	m_rctCard = QRect(0, 0, m_imgCard.width(), m_imgCard.height());
 	m_rctCard1 = QRect(0, 0, m_imgCard.width()/8, m_imgCard.height()/7);
@@ -21,6 +42,9 @@ FreeCellWidget::FreeCellWidget(QWidget *parent)
 	m_imgClub.load("Resources/club.png");
 	m_imgHeart.load("Resources/heart.png");
 	m_imgDiamond.load("Resources/diamond.png");
+	//
+	connect(&m_timer, SIGNAL(timeout()), this, SLOT(onTimer()));
+	m_timer.start(10);		//	100FPS
 	//
 	m_initHKey = m_bd.hkeyText();
 	m_undoIX = 0;
@@ -95,14 +119,14 @@ void FreeCellWidget::paintEvent(QPaintEvent*event)
 	px = 0;
 	for (int i = 0; i < N_FREECELL; ++i, px+=m_cdWidth) {
 		card_t cd = m_bd.getAt('F'+i);
-		if( cd != 0 )
+		if( cd != 0 && !isMoving(cd) )
 			drawCard(pt, px, 0, cd);
 	}
 	//	ホームセルカード表示
 	px = m_cdWidth * N_FREECELL;
 	for (int i = 0; i < N_HOME; ++i, px+=m_cdWidth) {
 		card_t cd = m_bd.getAt('A'+i);
-		if( cd != 0 )
+		if( cd != 0 && !isMoving(cd) )
 			drawCard(pt, px, 0, cd);
 	}
 	//	カラムのカード表示
@@ -112,8 +136,15 @@ void FreeCellWidget::paintEvent(QPaintEvent*event)
 		auto py = m_columnY0;						//	カラムカード表示位置
 		auto& lst = m_bd.getColumn(cix);
 		for (int i = 0; i != lst.size(); ++i, py+=m_dy) {
-			drawCard(pt, px, py, lst[i]);
+			if( !isMoving(lst[i]) )
+				drawCard(pt, px, py, lst[i]);
 		}
+	}
+	//	移動中カード表示
+	for(const auto& mvc: m_mvCard) {
+		qreal px = mvc.m_org.x() + mvc.m_diff.x() * mvc.m_count / MOVE_COUNT;
+		qreal py = mvc.m_org.y() + mvc.m_diff.y() * mvc.m_count / MOVE_COUNT;
+		drawCard(pt, px, py, mvc.m_card);
 	}
 }
 //	false for 非カード位置、-1 for フリーセル・ホームセル
@@ -165,6 +196,7 @@ void FreeCellWidget::mouseReleaseEvent(QMouseEvent* event)
 void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル・ホームセル
 {
 	char src = 0, dst = 0;
+	int srcRow = 0, dstRow = 0;
 	card_t cd = 0;
 	int n = 1;
 	if( row < 0 ) {		//	フリーセル・ホームセルの場合
@@ -178,6 +210,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				m_bd.canPushBackList(v, cd);
 				if( !v.empty() ) {
 					dst = '0'+ v.back();
+					dstRow = m_bd.getColumn(dst-'0').size() - 1;
 				} else {
 					//	undone:
 				}
@@ -192,6 +225,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				return;
 			n = lst.size() - row;
 			cd = lst[row];
+			srcRow = row;
 			if( n <= m_bd.nMobableDesc() ) {
 				vector<int> v;
 				m_bd.canPushBackList(v, cd, false);		//	空欄への移動不可
@@ -203,10 +237,12 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				}
 				src = '0' + clmn;
 				dst = '0'+v.front();
+				dstRow = m_bd.getColumn(dst-'0').size() - 1;
 			}
 		} else {		//	列の末尾がタップされた場合
 			cd = lst[row];
 			src = '0'+clmn;
+			srcRow = row;
 			if( m_bd.canMoveToHome(cd) ) {
 				dst = 'A'+cardColIX(cd);
 			} else {
@@ -214,6 +250,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				m_bd.canPushBackList(v, cd);
 				if( !v.empty() ) {
 					dst = '0'+v.front();
+					dstRow = m_bd.getColumn(dst-'0').size() - 1;
 				} else if( m_bd.canMoveTo('F', cd) ) {
 					dst = 'F'+m_bd.nCardFreeCell();
 				}
@@ -221,34 +258,22 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 		}
 	}
 	if( dst != 0 ) {
+		auto sv = posToVec2(src, srcRow);
+		auto dv = posToVec2(dst, dstRow);
+		m_mvCard.push_back(MovingCard(cd, sv, dv - sv));
 		Move mv(src, dst, n);
 		m_mvHist.push_back(mv);
 		m_undoIX = m_mvHist.size();
 		//
-		m_mvCard = cd;
+		//m_mvCard = cd;
 		m_bd.doMove(mv);
-#if	0
-		if( n == 1 ) {
-			m_bd.popFrom(src);
-			m_bd.putTo(dst, cd);
-		} else {
-			vector<card_t> v;
-			auto& lst = m_bd.getColumn(clmn);
-			for (int i = lst.size(); --i >= row; )
-				v.push_back(lst[i]);
-			for(auto cd: v) {
-				m_bd.popFrom(src);
-				m_bd.putTo(dst, cd);
-			}
-		}
-#endif
 		update();
 		return;
 	}
 }
 void FreeCellWidget::newGame(int msnum)
 {
-	m_mvCard = 0;
+	//m_mvCard = 0;
 	if( msnum >= 1 && msnum <= 32000 )
 		m_bd.initMS(msnum);
 	else
@@ -297,5 +322,13 @@ void FreeCellWidget::nextHint()
 	m_mvHist.push_back(mvs.front());
 	m_undoIX = m_mvHist.size();
 	m_bd.doMove(mvs.front());
+	update();
+}
+void FreeCellWidget::onTimer()
+{
+	for (int i = m_mvCard.size(); --i >= 0; ) {
+		if( ++m_mvCard[i].m_count >= MOVE_COUNT )
+			m_mvCard.erase(m_mvCard.begin() + i);
+	}
 	update();
 }
