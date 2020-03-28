@@ -3,6 +3,7 @@
 #include <QLineEdit>
 #include "MainWindow.h"
 #include "FreeCellWidget.h"
+#include "../FreeCell/utils.h"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -30,13 +31,23 @@ MainWindow::MainWindow(QWidget *parent)
 	QObject::connect(ui.action_Redo, SIGNAL(triggered()), this, SLOT(onRedo()));
 #endif
 	QObject::connect(ui.action_eXit, SIGNAL(triggered()), this, SLOT(onExit()));
+	//
+	onNewGame();
 }
 void MainWindow::onNewGame()
 {
 	int msnum = 0;
+#if	1
+	if( !m_leFCNum->text().isEmpty() ) {
+		msnum = m_leFCNum->text().toInt();
+	} else
+		msnum = g_mt() % 32000 + 1;
+	setWindowTitle(QString("QtFreeCell #") + QString::number(msnum));
+#else
 	if( !m_leFCNum->text().isEmpty() ) {
 		msnum = m_leFCNum->text().toInt();
 	}
+#endif
 	m_fcw->newGame(msnum);
 }
 void MainWindow::onUndo()
