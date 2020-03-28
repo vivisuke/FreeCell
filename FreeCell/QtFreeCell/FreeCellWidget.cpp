@@ -239,10 +239,13 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 		return;
 	}
 }
-void FreeCellWidget::newGame()
+void FreeCellWidget::newGame(int msnum)
 {
 	m_mvCard = 0;
-	m_bd.init();
+	if( msnum >= 1 && msnum <= 32000 )
+		m_bd.initMS(msnum);
+	else
+		m_bd.init();
 	m_initHKey = m_bd.hkeyText();
 	m_undoIX = 0;
 	update();

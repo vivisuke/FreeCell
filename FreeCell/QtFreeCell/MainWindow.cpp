@@ -1,4 +1,6 @@
 #include <QMessageBox>
+#include <QLabel>
+#include <QLineEdit>
 #include "MainWindow.h"
 #include "FreeCellWidget.h"
 
@@ -11,6 +13,11 @@ MainWindow::MainWindow(QWidget *parent)
 	m_fcw = new FreeCellWidget();
 	setCentralWidget(m_fcw);
 	setWindowTitle("QtFreeCell");
+	//
+	//auto label = new QLabel("#");
+	ui.mainToolBar->insertWidget(ui.action_New, new QLabel("# "));
+	(m_leFCNum = new QLineEdit())->setMaximumWidth(100);
+	ui.mainToolBar->insertWidget(ui.action_New, m_leFCNum);
 	//
 	QObject::connect(ui.action_New, SIGNAL(triggered()), this, SLOT(onNewGame()));
 	QObject::connect(ui.action_NextHint, SIGNAL(triggered()), m_fcw, SLOT(nextHint()));
@@ -26,7 +33,11 @@ MainWindow::MainWindow(QWidget *parent)
 }
 void MainWindow::onNewGame()
 {
-	m_fcw->newGame();
+	int msnum = 0;
+	if( !m_leFCNum->text().isEmpty() ) {
+		msnum = m_leFCNum->text().toInt();
+	}
+	m_fcw->newGame(msnum);
 }
 void MainWindow::onUndo()
 {

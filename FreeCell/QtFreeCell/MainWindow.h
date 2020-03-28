@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+//#include <QLineEdit>
 #include "ui_MainWindow.h"
 
 class MainWindow : public QMainWindow
@@ -18,5 +19,6 @@ public slots:
 
 private:
 	Ui::MainWindowClass ui;
+	class QLineEdit	*m_leFCNum;
 	class FreeCellWidget	*m_fcw;
 };

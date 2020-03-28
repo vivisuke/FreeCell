@@ -12,7 +12,7 @@ class FreeCellWidget : public QWidget
 public:
 	FreeCellWidget(QWidget *parent = Q_NULLPTR);
 	
-	void	newGame();
+	void	newGame(int msnum = 0);
 public slots:
 	void	doUndo();
 	void	doRedo();
