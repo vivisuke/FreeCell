@@ -1,6 +1,7 @@
 ﻿#include <QPainter>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QApplication>
 #include "../FreeCell/Board.h"
 #include "FreeCellWidget.h"
 
@@ -256,6 +257,9 @@ void FreeCellWidget::newGame(int msnum)
 	m_undoIX = 0;
 	update();
 }
+void FreeCellWidget::doReStart()
+{
+}
 bool FreeCellWidget::canUndo()
 {
 	return m_undoIX != 0;
@@ -281,7 +285,9 @@ void FreeCellWidget::doRedo()
 void FreeCellWidget::nextHint()
 {
 	Moves mvs;
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 	m_bd.genOpenClmnMoves(mvs, 10);
+	QApplication::setOverrideCursor(Qt::ArrowCursor);
 	qDebug() << "mvs.size() = " << mvs.size();
 	if( mvs.empty() ) return;
 	m_mvHist.push_back(mvs.front());

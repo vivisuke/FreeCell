@@ -29,6 +29,7 @@
     </property>
     <addaction name="action_New"/>
     <addaction name="separator"/>
+    <addaction name="actionre_Start"/>
     <addaction name="action_Undo"/>
     <addaction name="action_Redo"/>
     <addaction name="separator"/>
@@ -53,6 +54,7 @@
    <addaction name="action_New"/>
    <addaction name="action_NextHint"/>
    <addaction name="separator"/>
+   <addaction name="actionre_Start"/>
    <addaction name="action_Undo"/>
    <addaction name="action_Redo"/>
    <addaction name="separator"/>
@@ -62,7 +64,7 @@
   <action name="action_New">
    <property name="icon">
     <iconset resource="MainWindow.qrc">
-     <normaloff>:/MainWindow/Resources/renew_black.png</normaloff>:/MainWindow/Resources/renew_black.png</iconset>
+     <normaloff>:/MainWindow/Resources/reorder_black.png</normaloff>:/MainWindow/Resources/reorder_black.png</iconset>
    </property>
    <property name="text">
     <string>&amp;New</string>
@@ -102,6 +104,15 @@
    </property>
    <property name="text">
     <string>&amp;NextHint</string>
+   </property>
+  </action>
+  <action name="actionre_Start">
+   <property name="icon">
+    <iconset resource="MainWindow.qrc">
+     <normaloff>:/MainWindow/Resources/renew_black.png</normaloff>:/MainWindow/Resources/renew_black.png</iconset>
+   </property>
+   <property name="text">
+    <string>re&amp;Start</string>
    </property>
   </action>
  </widget>

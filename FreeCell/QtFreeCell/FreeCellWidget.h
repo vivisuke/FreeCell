@@ -14,6 +14,7 @@ public:
 	
 	void	newGame(int msnum = 0);
 public slots:
+	void	doReStart();
 	void	doUndo();
 	void	doRedo();
 	bool	canUndo();

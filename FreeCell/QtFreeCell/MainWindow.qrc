@@ -11,5 +11,6 @@
         <file>Resources/redo_black.png</file>
         <file>Resources/next_hint.png</file>
         <file>Resources/question.png</file>
+        <file>Resources/reorder_black.png</file>
     </qresource>
 </RCC>
