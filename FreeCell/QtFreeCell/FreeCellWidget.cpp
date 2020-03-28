@@ -193,9 +193,12 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 			cd = lst[row];
 			if( n <= m_bd.nMobableDesc() ) {
 				vector<int> v;
-				m_bd.canPushBackList(v, cd);
-				if( v.empty() )
-					return;
+				m_bd.canPushBackList(v, cd, false);		//	空欄への移動不可
+				if( v.empty() ) {
+					m_bd.canPushBackList(v, cd, true);		//	空欄への移動可
+					if( v.empty() )
+						return;
+				}
 				dst = '0'+v.front();
 			}
 		}

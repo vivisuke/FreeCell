@@ -557,13 +557,18 @@ bool Board::canMoveTo(char pos, card_t cd) const
 	return false;
 }
 //	指定カードを追加可能なカラム番号リスト生成
-void Board::canPushBackList(std::vector<int>& v, card_t cd) const
+void Board::canPushBackList(std::vector<int>& v, card_t cd, bool toEmpty) const
 {
 	v.clear();
 	for (int i = 0; i < N_COLUMN; ++i) {
 		const auto& lst = m_column[i];
-		if( lst.empty() || canPushBack(lst.back(), cd) )
-			v.push_back(i);
+		if( toEmpty ) {
+			if( lst.empty() || canPushBack(lst.back(), cd) )
+				v.push_back(i);
+		} else {
+			if( !lst.empty() && canPushBack(lst.back(), cd) )
+				v.push_back(i);
+		}
 	}
 }
 bool Board::isSafeToHome(card_t cd) const		//	カードを安全にホーム移動できるか？
