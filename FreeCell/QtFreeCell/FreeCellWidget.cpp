@@ -9,7 +9,7 @@ using namespace std;
 
 #define		SUIT_WIDTH			540
 #define		SUIT_HEIGHT			540
-#define		MOVE_COUNT		15
+#define		MOVE_SPEED			20
 
 //----------------------------------------------------------------------
 //	フリーセル（'F'～'I'）、ホームセル（'A'～'D'）、カラムベース位置（'0'～'7'）の左上点座標を返す
@@ -142,8 +142,8 @@ void FreeCellWidget::paintEvent(QPaintEvent*event)
 	}
 	//	移動中カード表示
 	for(const auto& mvc: m_mvCard) {
-		qreal px = mvc.m_org.x() + mvc.m_diff.x() * mvc.m_count / MOVE_COUNT;
-		qreal py = mvc.m_org.y() + mvc.m_diff.y() * mvc.m_count / MOVE_COUNT;
+		qreal px = mvc.m_org.x() + mvc.m_diff.x() * mvc.m_count / MOVE_SPEED;
+		qreal py = mvc.m_org.y() + mvc.m_diff.y() * mvc.m_count / MOVE_SPEED;
 		drawCard(pt, px, py, mvc.m_card);
 	}
 }
@@ -210,7 +210,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				m_bd.canPushBackList(v, cd);
 				if( !v.empty() ) {
 					dst = '0'+ v.back();
-					dstRow = m_bd.getColumn(dst-'0').size() - 1;
+					dstRow = m_bd.getColumn(dst-'0').size();
 				} else {
 					//	undone:
 				}
@@ -237,7 +237,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				}
 				src = '0' + clmn;
 				dst = '0'+v.front();
-				dstRow = m_bd.getColumn(dst-'0').size() - 1;
+				dstRow = m_bd.getColumn(dst-'0').size();
 			}
 		} else {		//	列の末尾がタップされた場合
 			cd = lst[row];
@@ -250,7 +250,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				m_bd.canPushBackList(v, cd);
 				if( !v.empty() ) {
 					dst = '0'+v.front();
-					dstRow = m_bd.getColumn(dst-'0').size() - 1;
+					dstRow = m_bd.getColumn(dst-'0').size();
 				} else if( m_bd.canMoveTo('F', cd) ) {
 					dst = 'F'+m_bd.nCardFreeCell();
 				}
@@ -327,7 +327,7 @@ void FreeCellWidget::nextHint()
 void FreeCellWidget::onTimer()
 {
 	for (int i = m_mvCard.size(); --i >= 0; ) {
-		if( ++m_mvCard[i].m_count >= MOVE_COUNT )
+		if( ++m_mvCard[i].m_count >= MOVE_SPEED )
 			m_mvCard.erase(m_mvCard.begin() + i);
 	}
 	update();
