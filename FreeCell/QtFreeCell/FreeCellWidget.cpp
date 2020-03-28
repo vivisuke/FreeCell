@@ -201,18 +201,19 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				}
 				dst = '0'+v.front();
 			}
-		}
-		cd = lst[row];
-		src = '0'+clmn;
-		if( m_bd.canMoveToHome(cd) ) {
-			dst = 'A'+cardColIX(cd);
-		} else {
-			vector<int> v;
-			m_bd.canPushBackList(v, cd);
-			if( !v.empty() ) {
-				dst = '0'+v.front();
-			} else if( m_bd.canMoveTo('F', cd) ) {
-				dst = 'F'+m_bd.nCardFreeCell();
+		} else {		//	列の末尾がタップされた場合
+			cd = lst[row];
+			src = '0'+clmn;
+			if( m_bd.canMoveToHome(cd) ) {
+				dst = 'A'+cardColIX(cd);
+			} else {
+				vector<int> v;
+				m_bd.canPushBackList(v, cd);
+				if( !v.empty() ) {
+					dst = '0'+v.front();
+				} else if( m_bd.canMoveTo('F', cd) ) {
+					dst = 'F'+m_bd.nCardFreeCell();
+				}
 			}
 		}
 	}
