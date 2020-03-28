@@ -9,7 +9,7 @@ using namespace std;
 
 #define		SUIT_WIDTH			540
 #define		SUIT_HEIGHT			540
-#define		MOVE_SPEED			20
+#define		MOVE_SPEED			12				//	大きい値ほどゆっくり移動
 
 //----------------------------------------------------------------------
 //	フリーセル（'F'～'I'）、ホームセル（'A'～'D'）、カラムベース位置（'0'～'7'）の左上点座標を返す
@@ -199,10 +199,11 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 	int srcRow = 0, dstRow = 0;
 	card_t cd = 0;
 	int n = 1;
+	vector<card_t> cds;
 	if( row < 0 ) {		//	フリーセル・ホームセルの場合
 		if( clmn < N_FREECELL ) {		//	フリーセルの場合
 			src = 'F'+clmn;
-			cd = m_bd.getAt(src);
+			cds.push_back(cd = m_bd.getAt(src));
 			if( m_bd.canMoveToHome(cd) ) {
 				dst = 'A'+cardColIX(cd);
 			} else {
@@ -238,9 +239,12 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				src = '0' + clmn;
 				dst = '0'+v.front();
 				dstRow = m_bd.getColumn(dst-'0').size();
+				while( row < lst.size() ) {
+					cds.push_back(lst[row++]);
+				}
 			}
 		} else {		//	列の末尾がタップされた場合
-			cd = lst[row];
+			cds.push_back(cd = lst[row]);
 			src = '0'+clmn;
 			srcRow = row;
 			if( m_bd.canMoveToHome(cd) ) {
@@ -258,9 +262,11 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 		}
 	}
 	if( dst != 0 ) {
-		auto sv = posToVec2(src, srcRow);
-		auto dv = posToVec2(dst, dstRow);
-		m_mvCard.push_back(MovingCard(cd, sv, dv - sv));
+		for (int i = 0; i < n; ++i) {
+			auto sv = posToVec2(src, srcRow+i);
+			auto dv = posToVec2(dst, dstRow+i);
+			m_mvCard.push_back(MovingCard(cds[i], sv, dv - sv));
+		}
 		Move mv(src, dst, n);
 		m_mvHist.push_back(mv);
 		m_undoIX = m_mvHist.size();
