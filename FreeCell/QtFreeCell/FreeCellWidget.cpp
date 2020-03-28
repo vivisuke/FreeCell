@@ -254,11 +254,15 @@ void FreeCellWidget::newGame(int msnum)
 	else
 		m_bd.init();
 	m_initHKey = m_bd.hkeyText();
+	m_mvHist.clear();
 	m_undoIX = 0;
 	update();
 }
 void FreeCellWidget::doReStart()
 {
+	m_bd.set(m_initHKey);
+	m_undoIX = 0;
+	update();
 }
 bool FreeCellWidget::canUndo()
 {

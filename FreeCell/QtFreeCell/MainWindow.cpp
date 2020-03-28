@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.mainToolBar->insertWidget(ui.action_New, m_leFCNum);
 	//
 	QObject::connect(ui.action_New, SIGNAL(triggered()), this, SLOT(onNewGame()));
+	QObject::connect(ui.action_reStart, SIGNAL(triggered()), m_fcw, SLOT(doReStart()));
 	QObject::connect(ui.action_NextHint, SIGNAL(triggered()), m_fcw, SLOT(nextHint()));
 #if	1
 	QObject::connect(ui.action_Undo, SIGNAL(triggered()), m_fcw, SLOT(doUndo()));
