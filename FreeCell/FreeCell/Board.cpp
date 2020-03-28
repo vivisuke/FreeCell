@@ -17,7 +17,7 @@ mt19937 g_mt(0);
 #endif
 #endif
 
-static unordered_map<string, Move> g_map;
+//static unordered_map<string, Move> g_map;
 
 uint8 cardNum(card_t c) { return c&NUM_MASK; }
 uint8 cardCol(card_t c) { return c&COL_MASK; }
@@ -622,7 +622,8 @@ void Board::genOpenClmnMoves(Moves& mvs, int depth) const		//	列を空ける着
 	int mxnm = 0;		//	最大移動可能降順列数
 	string mxnmhk;		//	最大移動可能降順列数を与える局面ハッシュテキスト
 	string openhk;		//	カラムが空いて、空きフリーセルが１以上の局面ハッシュテキスト
-	g_map.clear();
+	unordered_map<string, Move> g_map;
+	//g_map.clear();
 	g_map[hktxt] = Move(0,0);
 	vector<string> lst, lst2;
 	lst.push_back(hktxt);
@@ -673,6 +674,7 @@ void Board::genOpenClmnMoves(Moves& mvs, int depth) const		//	列を空ける着
 	    bd.unMove(mv);
 		hk = bd.hkeyText();
     }
+	//g_map.clear();
 }
 void Board::doMove(const Move& mv)
 {

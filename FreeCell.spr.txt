@@ -146,9 +146,9 @@
 ● C 03/29             ToDo #5357：Board::genOpenClmnMoves() に異様に時間がかかる
 ◎ C 03/29 03/29 0.001 ToDo Game > New アイコン変更
 ◎ C 03/29 03/29 0.001 ToDo Game > reStart メニュー追加
-● C 03/29             ToDo カード移動アニメーションｎ？
-● C 03/29             ToDo 
-● C 03/29             ToDo 
+● C 03/29             ToDo カード移動アニメーション？
+◎ C 03/29 03/29 0.001 ToDo Board::genOpenClmnMoves()：リターン時にマップメモリを開放
+● C 03/29             ToDo Board::genOpenClmnMoves()：Ａが列末尾にある場合は無条件にホームセルに移動
 ● C 03/29             ToDo 
 ● C 03/29             ToDo 
 ● C 03/29             ToDo 
