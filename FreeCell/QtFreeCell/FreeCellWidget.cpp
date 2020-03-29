@@ -273,6 +273,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 			m_mvCard.push_back(MovingCard(cds[i], sv, dv - sv));
 		}
 		Move mv(src, dst, n);
+		m_mvHist.resize(m_undoIX);
 		m_mvHist.push_back(mv);
 		m_undoIX = m_mvHist.size();
 		//
