@@ -52,11 +52,12 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_New"/>
-   <addaction name="action_NextHint"/>
    <addaction name="separator"/>
    <addaction name="action_reStart"/>
    <addaction name="action_Undo"/>
    <addaction name="action_Redo"/>
+   <addaction name="separator"/>
+   <addaction name="action_NextHint"/>
    <addaction name="separator"/>
    <addaction name="action_eXit"/>
   </widget>

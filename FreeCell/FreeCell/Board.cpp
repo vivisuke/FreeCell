@@ -659,7 +659,7 @@ void Board::genOpenClmnMoves(Moves& mvs, int depth) const		//	列を空ける着
 		}
 		lst.swap(lst2);		//	末端ノードリストを lst に転送
 		cout << n << ": lst.size() = " << lst.size() << ", mxnm = " << mxnm << "\n";
-		//if( mxnm > 5 ) break;
+		if( mxnm > 5 ) break;
 	}
     //	手順取得
     if( mxnm == 5 && !openhk.empty() )
