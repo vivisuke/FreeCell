@@ -20,21 +20,22 @@ MainWindow::MainWindow(QWidget *parent)
 	(m_leFCNum = new QLineEdit())->setMaximumWidth(100);
 	ui.mainToolBar->insertWidget(ui.action_New, m_leFCNum);
 	QObject::connect(m_leFCNum, SIGNAL(returnPressed()), this, SLOT(onNewGame()));
-	//
+	//	メニュー
 	QObject::connect(ui.action_New, SIGNAL(triggered()), this, SLOT(onNewGame()));
 	QObject::connect(ui.action_reStart, SIGNAL(triggered()), m_fcw, SLOT(doReStart()));
 	QObject::connect(ui.action_NextHint, SIGNAL(triggered()), m_fcw, SLOT(nextHint()));
-#if	1
 	QObject::connect(ui.action_Undo, SIGNAL(triggered()), m_fcw, SLOT(doUndo()));
 	//QObject::connect(ui.action_Undo, SIGNAL(aboutToShow()), m_fcw, SLOT(canUndo()));
 	QObject::connect(ui.action_Redo, SIGNAL(triggered()), m_fcw, SLOT(doRedo()));
-#else
-	QObject::connect(ui.action_Undo, SIGNAL(triggered()), this, SLOT(onUndo()));
-	QObject::connect(ui.action_Redo, SIGNAL(triggered()), this, SLOT(onRedo()));
-#endif
 	QObject::connect(ui.action_eXit, SIGNAL(triggered()), this, SLOT(onExit()));
 	//
+	QObject::connect(m_fcw, SIGNAL(showMessageOnSB(const QString&)), this, SLOT(showMessageOnSB(const QString&)));
+	//
 	onNewGame();
+}
+void MainWindow::showMessageOnSB(const QString& txt)
+{
+	ui.statusBar->showMessage(txt);
 }
 void MainWindow::onNewGame()
 {

@@ -278,6 +278,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 		//
 		//m_mvCard = cd;
 		m_bd.doMove(mv);
+		showMessageOnSB(QString("nMoved: " + QString::number(m_undoIX)));
 		update();
 		return;
 	}
@@ -292,12 +293,14 @@ void FreeCellWidget::newGame(int msnum)
 	m_initHKey = m_bd.hkeyText();
 	m_mvHist.clear();
 	m_undoIX = 0;
+	showMessageOnSB(QString("nMoved: " + QString::number(m_undoIX)));
 	update();
 }
 void FreeCellWidget::doReStart()
 {
 	m_bd.set(m_initHKey);
 	m_undoIX = 0;
+	showMessageOnSB(QString("nMoved: " + QString::number(m_undoIX)));
 	update();
 }
 bool FreeCellWidget::canUndo()
@@ -309,6 +312,7 @@ void FreeCellWidget::doUndo()
 	if( m_undoIX == 0 ) return;
 	auto mv = m_mvHist[--m_undoIX];
 	m_bd.unMove(mv);
+	showMessageOnSB(QString("nMoved: " + QString::number(m_undoIX)));
 	update();
 }
 bool FreeCellWidget::canRedo()
@@ -320,6 +324,7 @@ void FreeCellWidget::doRedo()
 	if( m_undoIX == m_mvHist.size() ) return;
 	auto mv = m_mvHist[m_undoIX++];
 	m_bd.doMove(mv);
+	showMessageOnSB(QString("nMoved: " + QString::number(m_undoIX)));
 	update();
 }
 void FreeCellWidget::nextHint()

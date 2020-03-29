@@ -16,6 +16,7 @@ public slots:
 	void	onUndo();
 	void	onRedo();
 	void	onExit();
+	void	showMessageOnSB(const QString&);
 
 private:
 	Ui::MainWindowClass ui;

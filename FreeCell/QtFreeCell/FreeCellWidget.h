@@ -69,6 +69,8 @@ public slots:
 	bool	canRedo();
 	void	nextHint();
 	void	onTimer();
+signals:
+	void	showMessageOnSB(const QString&);
 
 protected:
 	void	paintEvent(QPaintEvent*);
