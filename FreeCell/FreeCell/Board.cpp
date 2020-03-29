@@ -615,10 +615,10 @@ bool Board::genSafeMove(Move& mv) const				//	安全にホーム移動できる�
 	}
 	return false;
 }
-void Board::genOpenClmnMoves(Moves& mvs, int depth) const		//	列を空ける着手を生成
+int Board::genOpenClmnMoves(Moves& mvs, int depth) const		//	列を空ける着手を生成
 {
 	mvs.clear();
-	if( nEmptyColumns() != 0 ) return;		//	既に空列がある
+	if( nEmptyColumns() != 0 ) return 0;		//	既に空列がある
 	Board bd(*this);
 	auto hktxt = bd.hkeyText();
 	int mxnm = 0;		//	最大移動可能降順列数
@@ -677,6 +677,7 @@ void Board::genOpenClmnMoves(Moves& mvs, int depth) const		//	列を空ける着
 		hk = bd.hkeyText();
     }
 	//g_map.clear();
+	return mxnm;
 }
 void Board::doMove(const Move& mv)
 {

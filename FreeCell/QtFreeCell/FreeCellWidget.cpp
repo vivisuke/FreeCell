@@ -332,13 +332,14 @@ void FreeCellWidget::nextHint()
 {
 	Moves mvs;
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-	m_bd.genOpenClmnMoves(mvs, 10);
+	int nm = m_bd.genOpenClmnMoves(mvs, 10);
 	QApplication::setOverrideCursor(Qt::ArrowCursor);
 	qDebug() << "mvs.size() = " << mvs.size();
 	if( mvs.empty() ) return;
 	m_mvHist.push_back(mvs.front());
 	m_undoIX = m_mvHist.size();
 	m_bd.doMove(mvs.front());
+	showMessageOnSB(QString("nm = " + QString::number(nm)));
 	update();
 }
 void FreeCellWidget::onTimer()
