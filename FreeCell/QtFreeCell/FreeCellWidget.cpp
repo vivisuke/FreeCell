@@ -214,7 +214,7 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				vector<int> v;
 				m_bd.canPushBackList(v, cd);
 				if( !v.empty() ) {
-					dst = '0'+ v.back();
+					dst = '0'+ v.front();
 					dstRow = m_bd.getColumn(dst-'0').size();
 				} else {
 					//	undone:
