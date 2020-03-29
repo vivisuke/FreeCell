@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.mainToolBar->insertWidget(ui.action_New, new QLabel("# "));
 	(m_leFCNum = new QLineEdit())->setMaximumWidth(100);
 	ui.mainToolBar->insertWidget(ui.action_New, m_leFCNum);
+	QObject::connect(m_leFCNum, SIGNAL(returnPressed()), this, SLOT(onNewGame()));
 	//
 	QObject::connect(ui.action_New, SIGNAL(triggered()), this, SLOT(onNewGame()));
 	QObject::connect(ui.action_reStart, SIGNAL(triggered()), m_fcw, SLOT(doReStart()));
