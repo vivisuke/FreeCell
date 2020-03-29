@@ -235,7 +235,8 @@ void FreeCellWidget::onTapped(int clmn, int row)		//	row: -1 for フリーセル
 				vector<int> v;
 				m_bd.canPushBackList(v, cd, false);		//	空欄への移動不可
 				if( v.empty() ) {
-					m_bd.canPushBackList(v, cd, true);		//	空欄への移動可
+					if( n <= m_bd.nMobableDescToEmpty() )
+						m_bd.canPushBackList(v, cd, true);		//	空欄への移動可
 					if( v.empty() )
 						return;
 					qDebug() << "toEmpty";

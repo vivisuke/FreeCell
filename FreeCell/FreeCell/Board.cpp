@@ -566,11 +566,13 @@ void Board::canPushBackList(std::vector<int>& v, card_t cd, bool toEmpty) const
 	v.clear();
 	for (int i = 0; i < N_COLUMN; ++i) {
 		const auto& lst = m_column[i];
-		if( toEmpty ) {
-			if( lst.empty() || canPushBack(lst.back(), cd) )
-				v.push_back(i);
-		} else {
-			if( !lst.empty() && canPushBack(lst.back(), cd) )
+		if( !lst.empty() && canPushBack(lst.back(), cd) )
+			v.push_back(i);
+	}
+	if( toEmpty ) {
+		for (int i = 0; i < N_COLUMN; ++i) {
+			const auto& lst = m_column[i];
+			if( lst.empty() )
 				v.push_back(i);
 		}
 	}
